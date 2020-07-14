@@ -1,1 +1,1 @@
-## Extensão para Quarkus do projeto base do BBDev
+## Extension to add BB Metrics do Quarkus Projects

@@ -5,6 +5,8 @@ import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
 
+import br.com.rubim.runtime.MetricsEnum;
+import br.com.rubim.runtime.MetricsFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.Capabilities;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -25,24 +27,26 @@ class QuarkusMonitor {
     @BuildStep
     void addProviders(BuildProducer<ResteasyJaxrsProviderBuildItem> providers,
             BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItem, Capabilities capabilities) {
+        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsFilter.class.getName()));
+
     }
 
     @BuildStep
     void registerMetrics(BuildProducer<MetricBuildItem> producer) {
         producer.produce(
-                metric("application_info", MetricType.COUNTER, "static info of the application",
+                metric(MetricsEnum.APPLICATION_INFO, MetricType.COUNTER,
                         new Tag("version", ConfigProvider.getConfig()
                                 .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"))));
 
     }
 
-    private MetricBuildItem metric(String name, MetricType type, String description, Tag... tags) {
+    private MetricBuildItem metric(MetricsEnum metric, MetricType type, Tag... tags) {
         Metadata metadata = Metadata.builder()
-                .withName(name)
-                .withDisplayName(name)
+                .withName(metric.getName())
+                .withDisplayName(metric.getName())
                 .withType(type)
                 .withUnit("none")
-                .withDescription(description)
+                .withDescription(metric.getDescription())
                 .reusable()
                 .build();
         return new MetricBuildItem(metadata, true, "", tags);

@@ -1,11 +1,8 @@
-name: "DX"
+name: "Big Brother Metrics extension"
 metadata:
   keywords:
-    - "agroal"
-    - "database-connection-pool"
-    - "datasource"
-    - "jdbc"
-  guide: "https://quarkus.io/guides/datasource"
+    - "metrics"
+  guide: "https://github.com/marcelorubim/quarkus-monitor/"
   categories:
     - "data"
   status: "stable"

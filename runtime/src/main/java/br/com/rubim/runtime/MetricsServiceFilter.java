@@ -16,7 +16,7 @@ import org.eclipse.microprofile.metrics.*;
 import io.smallrye.metrics.MetricRegistries;
 
 @Provider
-public class MetricsFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class MetricsServiceFilter implements ContainerRequestFilter, ContainerResponseFilter {
     private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS";
 
     @Override

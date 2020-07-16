@@ -5,8 +5,9 @@ import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
 
+import br.com.rubim.runtime.MetricsClientFilter;
 import br.com.rubim.runtime.MetricsEnum;
-import br.com.rubim.runtime.MetricsFilter;
+import br.com.rubim.runtime.MetricsServiceFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.Capabilities;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -27,7 +28,8 @@ class QuarkusMonitor {
     @BuildStep
     void addProviders(BuildProducer<ResteasyJaxrsProviderBuildItem> providers,
             BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItem, Capabilities capabilities) {
-        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsFilter.class.getName()));
+        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceFilter.class.getName()));
+        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
 
     }
 

@@ -5,7 +5,7 @@
     <artifactId>quarkus-monitor-parent</artifactId>
     <name>Extension to add Big Brother Metrics</name>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,7 +46,7 @@
         <url>https://github.com/marcelorubim/quarkus-monitor/</url>
         <connection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</connection>
         <developerConnection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</developerConnection>
-        <tag>HEAD</tag>
+        <tag>1.0.1</tag>
     </scm>
     <build>
         <pluginManagement>

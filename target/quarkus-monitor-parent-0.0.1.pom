@@ -6,7 +6,6 @@
     <name>Extension to add Big Brother Metrics</name>
     <packaging>pom</packaging>
     <version>0.0.1</version>
-    <url>https://github.com/marcelorubim/quarkus-monitor/</url>
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>

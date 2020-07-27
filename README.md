@@ -4,18 +4,18 @@ This projects implements the [Big Brother](https://github.com/labbsr0x/big-broth
 
 As Quarkus follows the MicroProfile Metrics specifications, some changes have to be made in the metrics name.
 
-All BB Metrics will have the vendor prefix.
+All BB Metrics will have the application prefix.
 
 ```
-vendor_request_seconds_bucket{type, status, isError, errorMessage, method, addr, le}
-vendor_request_seconds_count{type, status, isError, errorMessage, method, addr}
-vendor_request_seconds_sum{type, status, isError, errorMessage, method, addr}
-vendor_response_size_bytes{type, status, isError, errorMessage, method, addr}
-vendor_dependency_up{name}
-vendor_dependency_request_seconds_bucket{name, type, status, isError, errorMessage, method, addr, le}
-vendor_dependency_request_seconds_count{name, type, status, isError, errorMessage, method, add}
-vendor_dependency_request_seconds_sum{name, type, status, isError, errorMessage, method, add}
-vendor_application_info{version}
+application_request_seconds_bucket{type, status, isError, errorMessage, method, addr, le}
+application_request_seconds_count{type, status, isError, errorMessage, method, addr}
+application_request_seconds_sum{type, status, isError, errorMessage, method, addr}
+application_response_size_bytes{type, status, isError, errorMessage, method, addr}
+application_dependency_up{name}
+application_dependency_request_seconds_bucket{name, type, status, isError, errorMessage, method, addr, le}
+application_dependency_request_seconds_count{name, type, status, isError, errorMessage, method, add}
+application_dependency_request_seconds_sum{name, type, status, isError, errorMessage, method, add}
+application_info{version}
 ```
 
 ##### Dependency Metrics

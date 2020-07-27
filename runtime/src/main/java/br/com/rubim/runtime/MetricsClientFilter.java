@@ -30,14 +30,23 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
             throws IOException {
         Method method = (Method) clientRequestContext.getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
         Tag[] tags = new Tag[] { new Tag("name", method.getDeclaringClass().getCanonicalName()) };
-        MetricRegistries.get(MetricRegistry.Type.VENDOR).counter(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_COUNT.getName(), tags)
+        MetricRegistries.get(MetricRegistry.Type.APPLICATION).counter(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_COUNT.getName(), tags)
                 .inc();
-        Instant init = (Instant) clientRequestContext.getProperty("TIMER_INIT_TIME_MILLISECONDS");
+        var gaugeDepsUp = MetricRegistries.get(MetricRegistry.Type.APPLICATION).concurrentGauge(MetadataBuilder.Build(MetricsEnum.DEPENDENCY_UP,MetricType.CONCURRENT_GAUGE, tags));
+        if(clientResponseContext.getStatus() >= 200 && clientResponseContext.getStatus() < 500 && gaugeDepsUp.getCount() == 0){
+            gaugeDepsUp.inc();
+        }else if(clientResponseContext.getStatus() >= 500 && gaugeDepsUp.getCount() == 1){
+            gaugeDepsUp.dec();
+        }
 
-        MetricRegistries.get(MetricRegistry.Type.VENDOR).timer(Metadata.builder()
-                .withName(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_SUM.getName())
-                .withUnit(MetricUnits.SECONDS)
-                .withType(MetricType.TIMER)
-                .build(), tags).update(Duration.between(init, Instant.now()).toMillis(), TimeUnit.MILLISECONDS);
+        if(clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null){
+            Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
+
+            MetricRegistries.get(MetricRegistry.Type.APPLICATION).timer(Metadata.builder()
+                    .withName(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_SUM.getName())
+                    .withUnit(MetricUnits.SECONDS)
+                    .withType(MetricType.TIMER)
+                    .build(), tags).update(Duration.between(init, Instant.now()).toMillis(), TimeUnit.MILLISECONDS);
+        }
     }
 }

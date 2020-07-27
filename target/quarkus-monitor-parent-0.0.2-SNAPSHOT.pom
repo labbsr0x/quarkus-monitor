@@ -3,9 +3,17 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.marcelorubim</groupId>
     <artifactId>quarkus-monitor-parent</artifactId>
-    <name>Extension to add Big Brother Metrics</name>
+    <name>quarkus-monitor-parent</name>
+    <description>Extension to add Big Brother Metrics</description>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
+    <url>https://github.com/marcelorubim/quarkus-monitor/</url>
+    <developers>
+        <developer>
+            <name>Marcelo Rubim</name>
+            <email>marcelorubim@gmail.com</email>
+        </developer>
+    </developers>
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -23,8 +31,8 @@
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <quarkus.version>1.4.2.Final</quarkus.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <supported-maven-versions>[3.5.3,)</supported-maven-versions>
 

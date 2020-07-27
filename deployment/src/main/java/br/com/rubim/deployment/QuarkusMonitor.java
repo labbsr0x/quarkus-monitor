@@ -1,13 +1,14 @@
 package br.com.rubim.deployment;
 
+import br.com.rubim.runtime.*;
+import io.quarkus.deployment.annotations.ExecutionTime;
+import io.quarkus.deployment.annotations.Record;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.metrics.Metadata;
+import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
 
-import br.com.rubim.runtime.MetricsClientFilter;
-import br.com.rubim.runtime.MetricsEnum;
-import br.com.rubim.runtime.MetricsServiceFilter;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.Capabilities;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -17,7 +18,7 @@ import io.quarkus.smallrye.metrics.deployment.spi.MetricBuildItem;
 
 class QuarkusMonitor {
 
-    private static final String FEATURE = "dx-quarkus-ext";
+    private static final String FEATURE = "monitor";
 
     @BuildStep
     AdditionalBeanBuildItem registerAdditionalBeans() {
@@ -27,31 +28,29 @@ class QuarkusMonitor {
 
     @BuildStep
     void addProviders(BuildProducer<ResteasyJaxrsProviderBuildItem> providers,
-            BuildProducer<AdditionalBeanBuildItem> additionalBeanBuildItem, Capabilities capabilities) {
-        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceFilter.class.getName()));
-        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
+            MetricsB5Configuration configuration) {
+        if(configuration.enable){
+            providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceFilter.class.getName()));
+            providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
+        }
 
     }
 
     @BuildStep
-    void registerMetrics(BuildProducer<MetricBuildItem> producer) {
-        producer.produce(
-                metric(MetricsEnum.APPLICATION_INFO, MetricType.COUNTER,
-                        new Tag("version", ConfigProvider.getConfig()
-                                .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"))));
+    void registerMetrics(BuildProducer<MetricBuildItem> producer, MetricsB5Configuration configuration) {
+        System.out.println(configuration.enable);
+        if(configuration.enable) {
+            producer.produce(
+                    metric(MetricsEnum.INFO, MetricType.COUNTER,
+                            new Tag("version", ConfigProvider.getConfig()
+                                    .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"))));
+        }
+
 
     }
 
     private MetricBuildItem metric(MetricsEnum metric, MetricType type, Tag... tags) {
-        Metadata metadata = Metadata.builder()
-                .withName(metric.getName())
-                .withDisplayName(metric.getName())
-                .withType(type)
-                .withUnit("none")
-                .withDescription(metric.getDescription())
-                .reusable()
-                .build();
-        return new MetricBuildItem(metadata, true, "", tags);
+        return new MetricBuildItem(MetadataBuilder.Build(metric,type,tags),null, true, "", MetricRegistry.Type.APPLICATION,tags);
     }
 
 }

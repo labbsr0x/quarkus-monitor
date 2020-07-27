@@ -15,7 +15,7 @@ public enum MetricsEnum {
     DEPENDENCY_REQUEST_SECONDS_COUNT("is a counter that counts the overall number of requests to a specific dependency"),
     DEPENDENCY_REQUEST_SECONDS_SUM(
             "is a counter that counts the overall sum of how long requests to a specific dependency are taking"),
-    APPLICATION_INFO("holds static info of an application, such as it's semantic version number");
+    INFO("holds static info of an application, such as it's semantic version number");
 
     private String description;
     private String name;

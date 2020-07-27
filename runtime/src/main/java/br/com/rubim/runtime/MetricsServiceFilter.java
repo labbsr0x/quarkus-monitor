@@ -28,16 +28,17 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
     public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext)
             throws IOException {
         Tag[] tags = extractTags(containerRequestContext, containerResponseContext);
-        MetricRegistries.get(MetricRegistry.Type.VENDOR).counter(MetricsEnum.REQUEST_SECONDS_COUNT.getName(), tags)
+        MetricRegistries.get(MetricRegistry.Type.APPLICATION).counter(MetricsEnum.REQUEST_SECONDS_COUNT.getName(), tags)
                 .inc();
-        Instant init = (Instant) containerRequestContext.getProperty("TIMER_INIT_TIME_MILLISECONDS");
+        if(containerRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
+            Instant init = (Instant) containerRequestContext.getProperty("TIMER_INIT_TIME_MILLISECONDS");
 
-        MetricRegistries.get(MetricRegistry.Type.VENDOR).timer(Metadata.builder()
-                .withName(MetricsEnum.REQUEST_SECONDS_SUM.getName())
-                .withUnit(MetricUnits.SECONDS)
-                .withType(MetricType.TIMER)
-                .build(), tags).update(Duration.between(init, Instant.now()).toMillis(), TimeUnit.MILLISECONDS);
-
+            MetricRegistries.get(MetricRegistry.Type.APPLICATION).timer(Metadata.builder()
+                    .withName(MetricsEnum.REQUEST_SECONDS_SUM.getName())
+                    .withUnit(MetricUnits.SECONDS)
+                    .withType(MetricType.TIMER)
+                    .build(), tags).update(Duration.between(init, Instant.now()).toMillis(), TimeUnit.MILLISECONDS);
+        }
     }
 
     private Tag[] extractTags(ContainerRequestContext containerRequestContext,

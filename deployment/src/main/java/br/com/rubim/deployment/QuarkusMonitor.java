@@ -5,6 +5,7 @@ import br.com.rubim.runtime.config.MetricsEnum;
 import br.com.rubim.runtime.filters.MetricsClientFilter;
 import br.com.rubim.runtime.filters.MetricsServiceFilter;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
@@ -49,7 +50,15 @@ class QuarkusMonitor {
     }
 
     private MetricBuildItem metric(MetricsEnum metric, MetricType type, Tag... tags) {
-        return new MetricBuildItem(MetadataBuilder.Build(metric,type,tags),null, true, "", MetricRegistry.Type.APPLICATION,tags);
+        Metadata metadata = Metadata.builder()
+                .withName(metric.getName())
+                .withDisplayName(metric.getName())
+                .withType(type)
+                .withUnit("none")
+                .withDescription(metric.getDescription())
+                .reusable()
+                .build();
+        return new MetricBuildItem(metadata, true, "", tags);
     }
 
 }

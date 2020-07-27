@@ -6,7 +6,7 @@
     <name>quarkus-monitor-parent</name>
     <description>Extension to add Big Brother Metrics</description>
     <packaging>pom</packaging>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <url>https://github.com/marcelorubim/quarkus-monitor/</url>
     <developers>
         <developer>
@@ -63,7 +63,7 @@
         <url>https://github.com/marcelorubim/quarkus-monitor/</url>
         <connection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</connection>
         <developerConnection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.0.3</tag>
     </scm>
     <licenses>
         <license>

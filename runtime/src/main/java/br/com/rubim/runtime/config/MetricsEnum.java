@@ -11,7 +11,7 @@ public enum MetricsEnum {
             MetricType.COUNTER),
     REQUEST_SECONDS_SUM(
             "is a counter that counts the overall sum of how long the requests with those exact label occurrences are taking;",
-            MetricType.TIMER),
+            MetricType.COUNTER),
     RESPONSE_SIZE_BYTES(
             "is a counter that computes how much data is being sent back to the user for a given request type. It captures the response size from the content-length response header. If there is no such header, the value exposed as metric will be zero",
             MetricType.COUNTER),
@@ -26,7 +26,7 @@ public enum MetricsEnum {
     DEPENDENCY_REQUEST_SECONDS_SUM(
             "is a counter that counts the overall sum of how long requests to a specific dependency are taking",
             MetricType.COUNTER),
-    INFO("holds static info of an application, such as it's semantic version number", MetricType.COUNTER);
+    APPLICATION_INFO("holds static info of an application, such as it's semantic version number", MetricType.COUNTER);
 
     private String description;
     private String name;

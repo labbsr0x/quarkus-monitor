@@ -30,10 +30,10 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
             throws IOException {
         Tag[] tags = TagsUtil.extractTags(clientRequestContext, clientResponseContext);
 
-        MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+        MetricRegistries.get(MetricRegistry.Type.VENDOR)
                 .counter(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_COUNT.getDefaultMetadata(), tags)
                 .inc();
-        var gaugeDepsUp = MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+        var gaugeDepsUp = MetricRegistries.get(MetricRegistry.Type.VENDOR)
                 .concurrentGauge(MetricsEnum.DEPENDENCY_UP.getDefaultMetadata(), tags);
 
         if (clientResponseContext.getStatus() >= 200 && clientResponseContext.getStatus() < 500
@@ -42,17 +42,17 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
         } else if (clientResponseContext.getStatus() >= 500 && gaugeDepsUp.getCount() == 1) {
             gaugeDepsUp.dec();
         }
-        MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+        MetricRegistries.get(MetricRegistry.Type.VENDOR)
                 .counter(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_COUNT.getDefaultMetadata(),tags)
                 .inc();
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
             var duration = Duration.between(init, Instant.now()).toMillis();
 
-            MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+            MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .counter(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_SUM.getDefaultMetadata(),tags)
                     .inc(duration);
-            MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+            MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .timer(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_BUCKET.getDefaultMetadata(), tags)
                     .update(duration,TimeUnit.MILLISECONDS);
         }

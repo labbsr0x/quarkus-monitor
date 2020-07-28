@@ -29,24 +29,24 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
     public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext)
             throws IOException {
         Tag[] tags = TagsUtil.extractTags(containerRequestContext, containerResponseContext);
-        MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+        MetricRegistries.get(MetricRegistry.Type.VENDOR)
                 .counter(MetricsEnum.REQUEST_SECONDS_COUNT.getDefaultMetadata(), tags)
                 .inc();
 
         if (containerResponseContext.getLength() != -1) {
-            MetricRegistries.get(MetricRegistry.Type.APPLICATION).counter(MetricsEnum.RESPONSE_SIZE_BYTES.getDefaultMetadata())
+            MetricRegistries.get(MetricRegistry.Type.VENDOR).counter(MetricsEnum.RESPONSE_SIZE_BYTES.getDefaultMetadata())
                     .inc(containerResponseContext.getLength());
         }
-        MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+        MetricRegistries.get(MetricRegistry.Type.VENDOR)
                 .counter(MetricsEnum.REQUEST_SECONDS_COUNT.getDefaultMetadata(),tags)
                 .inc();
         if (containerRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) containerRequestContext.getProperty("TIMER_INIT_TIME_MILLISECONDS");
             var duration = Duration.between(init, Instant.now()).toMillis();
-            MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+            MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .counter(MetricsEnum.REQUEST_SECONDS_SUM.getDefaultMetadata(), tags)
                     .inc(duration);
-            MetricRegistries.get(MetricRegistry.Type.APPLICATION)
+            MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .timer(MetricsEnum.REQUEST_SECONDS_BUCKET.getDefaultMetadata(), tags)
                     .update(Duration.between(init, Instant.now()).toMillis(), TimeUnit.MILLISECONDS);
         }

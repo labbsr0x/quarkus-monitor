@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @Provider
 public class MetricsClientFilter implements ClientResponseFilter, ClientRequestFilter {
-    private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS";
+    private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS_CLIENT";
 
     @Override
     public void filter(ClientRequestContext clientRequestContext) throws IOException {
@@ -47,14 +47,14 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
                 .inc();
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
-            var duration = Duration.between(init, Instant.now()).toMillis();
+            var duration = Duration.between(init, Instant.now()).toSeconds();
 
             MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .counter(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_SUM.getDefaultMetadata(),tags)
                     .inc(duration);
             MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .timer(MetricsEnum.DEPENDENCY_REQUEST_SECONDS_BUCKET.getDefaultMetadata(), tags)
-                    .update(duration,TimeUnit.MILLISECONDS);
+                    .update(duration,TimeUnit.SECONDS);
         }
     }
 }

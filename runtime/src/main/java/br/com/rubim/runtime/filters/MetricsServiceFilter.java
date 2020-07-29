@@ -42,13 +42,13 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
                 .inc();
         if (containerRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) containerRequestContext.getProperty("TIMER_INIT_TIME_MILLISECONDS");
-            var duration = Duration.between(init, Instant.now()).toMillis();
+            var duration = Duration.between(init, Instant.now()).toSeconds();
             MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .counter(MetricsEnum.REQUEST_SECONDS_SUM.getDefaultMetadata(), tags)
                     .inc(duration);
             MetricRegistries.get(MetricRegistry.Type.VENDOR)
                     .timer(MetricsEnum.REQUEST_SECONDS_BUCKET.getDefaultMetadata(), tags)
-                    .update(Duration.between(init, Instant.now()).toMillis(), TimeUnit.MILLISECONDS);
+                    .update(duration, TimeUnit.SECONDS);
         }
     }
 

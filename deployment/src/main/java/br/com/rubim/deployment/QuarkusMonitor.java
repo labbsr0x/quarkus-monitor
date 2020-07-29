@@ -50,6 +50,7 @@ class QuarkusMonitor {
         if(configuration.enable) {
             producer.produce(
                     metric(MetricsEnum.APPLICATION_INFO, MetricType.COUNTER,
+                            new Tag("kind","b5"),
                             new Tag("version", ConfigProvider.getConfig()
                                     .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"))));
         }

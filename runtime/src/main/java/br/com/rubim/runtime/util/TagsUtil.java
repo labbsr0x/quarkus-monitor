@@ -13,6 +13,7 @@ public class TagsUtil {
     public static Tag[] extractTags(ContainerRequestContext containerRequestContext,
             ContainerResponseContext containerResponseContext) {
         return new Tag[] {
+                new Tag("kind", "b5"),
                 new Tag("type", "http"),
                 new Tag("method", containerRequestContext.getMethod()),
                 new Tag("addr", containerRequestContext.getUriInfo().getPath()),

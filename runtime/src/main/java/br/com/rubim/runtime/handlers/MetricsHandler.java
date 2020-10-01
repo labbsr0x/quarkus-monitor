@@ -2,9 +2,7 @@ package br.com.rubim.runtime.handlers;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.Gauge;
 import io.smallrye.metrics.MetricsRequestHandler;
-import io.smallrye.metrics.exporters.OpenMetricsExporter;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -20,17 +18,34 @@ import java.util.stream.Stream;
 
 public class MetricsHandler implements Handler<RoutingContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsHandler.class);
-
+    String path;
     private CollectorRegistry registry = CollectorRegistry.defaultRegistry;
 
-    String path;
-
-    public MetricsHandler(){
+    public MetricsHandler() {
         this.path = "/metrics";
     }
 
     public MetricsHandler(String path) {
         this.path = path;
+    }
+
+    private static void writeEscapedLabelValue(StringBuilder sb, String s) {
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            switch (c) {
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\"':
+                    sb.append("\\\"");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                default:
+                    sb.append(c);
+            }
+        }
     }
 
     @Override public void handle(RoutingContext routingContext) {
@@ -44,7 +59,7 @@ public class MetricsHandler implements Handler<RoutingContext> {
                     (status, message, headers) -> {
                         response.setStatusCode(status);
                         headers.forEach(response::putHeader);
-                       sb.append(message);
+                        sb.append(message);
                     });
             sb.append(readMetricsFromPromClient(registry.metricFamilySamples()));
             response.end(Buffer.buffer(sb.toString()));
@@ -55,9 +70,9 @@ public class MetricsHandler implements Handler<RoutingContext> {
         }
     }
 
-    public String readMetricsFromPromClient(Enumeration<Collector.MetricFamilySamples> mfs){
+    public String readMetricsFromPromClient(Enumeration<Collector.MetricFamilySamples> mfs) {
         final StringBuilder sb = new StringBuilder();
-        while(mfs.hasMoreElements()) {
+        while (mfs.hasMoreElements()) {
             Collector.MetricFamilySamples metricFamilySamples = mfs.nextElement();
             sb.append("# HELP ");
             sb.append(metricFamilySamples.name);
@@ -69,7 +84,7 @@ public class MetricsHandler implements Handler<RoutingContext> {
             sb.append(' ');
             sb.append(metricFamilySamples.type.name().toLowerCase());
             sb.append('\n');
-            for (Collector.MetricFamilySamples.Sample sample: metricFamilySamples.samples) {
+            for (Collector.MetricFamilySamples.Sample sample : metricFamilySamples.samples) {
                 sb.append(sample.name);
                 if (sample.labelNames.size() > 0) {
                     sb.append('{');
@@ -91,24 +106,5 @@ public class MetricsHandler implements Handler<RoutingContext> {
             }
         }
         return sb.toString();
-    }
-
-    private static void writeEscapedLabelValue(StringBuilder sb, String s) {
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            switch (c) {
-                case '\\':
-                    sb.append("\\\\");
-                    break;
-                case '\"':
-                    sb.append("\\\"");
-                    break;
-                case '\n':
-                    sb.append("\\n");
-                    break;
-                default:
-                    sb.append(c);
-            }
-        }
     }
 }

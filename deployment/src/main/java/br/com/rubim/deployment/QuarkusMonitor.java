@@ -6,40 +6,20 @@ import br.com.rubim.runtime.config.MetricsEnum;
 import br.com.rubim.runtime.filters.MetricsClientFilter;
 import br.com.rubim.runtime.filters.MetricsServiceFilter;
 import br.com.rubim.runtime.handlers.MetricsHandler;
-import io.prometheus.client.Counter;
-import io.quarkus.deployment.annotations.Record;
-import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
-import io.quarkus.deployment.builditem.LaunchModeBuildItem;
-import io.quarkus.smallrye.metrics.runtime.SmallRyeMetricsRecorder;
-import io.quarkus.vertx.http.deployment.HttpRootPathBuildItem;
-import io.quarkus.vertx.http.deployment.RouteBuildItem;
-import io.quarkus.vertx.http.deployment.devmode.NotFoundPageDisplayableEndpointBuildItem;
-import io.quarkus.vertx.http.runtime.HandlerType;
-import io.vertx.ext.web.Route;
-import io.vertx.ext.web.Router;
-import org.eclipse.microprofile.config.ConfigProvider;
-
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
 import io.quarkus.smallrye.metrics.deployment.spi.MetricBuildItem;
+import io.quarkus.vertx.http.deployment.RouteBuildItem;
+import io.quarkus.vertx.http.runtime.HandlerType;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricType;
 import org.eclipse.microprofile.metrics.Tag;
-import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.DotName;
-import org.jboss.jandex.IndexView;
-
-import java.util.function.Function;
-
-import static io.quarkus.deployment.annotations.ExecutionTime.STATIC_INIT;
 
 class QuarkusMonitor {
     private static final DotName DEPENDENCY_HEALTH = DotName.createSimple(DependencyHealth.class.getName());
-
 
     private static final String FEATURE = "monitor";
 
@@ -58,7 +38,7 @@ class QuarkusMonitor {
     @BuildStep
     void addProviders(BuildProducer<ResteasyJaxrsProviderBuildItem> providers,
             MetricsB5Configuration configuration) {
-        if(configuration.enable){
+        if (configuration.enable) {
             providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceFilter.class.getName()));
             providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
         }
@@ -68,14 +48,13 @@ class QuarkusMonitor {
     @BuildStep
     void registerMetrics(BuildProducer<MetricBuildItem> producer, MetricsB5Configuration configuration) {
         //TODO metrics recorder
-//        if(configuration.enable) {
-//            producer.produce(
-//                    metric(MetricsEnum.APPLICATION_INFO, MetricType.COUNTER,
-//                            new Tag("kind","b5"),
-//                            new Tag("version", ConfigProvider.getConfig()
-//                                    .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"))));
-//        }
-
+        //        if(configuration.enable) {
+        //            producer.produce(
+        //                    metric(MetricsEnum.APPLICATION_INFO, MetricType.COUNTER,
+        //                            new Tag("kind","b5"),
+        //                            new Tag("version", ConfigProvider.getConfig()
+        //                                    .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"))));
+        //        }
 
     }
 

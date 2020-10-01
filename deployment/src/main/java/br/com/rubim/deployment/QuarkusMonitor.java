@@ -9,12 +9,7 @@ import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
-import io.quarkus.smallrye.metrics.deployment.spi.MetricBuildItem;
 import io.quarkus.vertx.http.deployment.FilterBuildItem;
-import io.quarkus.vertx.http.deployment.RouteBuildItem;
-import org.eclipse.microprofile.metrics.Metadata;
-import org.eclipse.microprofile.metrics.MetricType;
-import org.eclipse.microprofile.metrics.Tag;
 import org.jboss.jandex.DotName;
 
 class QuarkusMonitor {
@@ -29,10 +24,8 @@ class QuarkusMonitor {
     }
 
     @BuildStep
-    void createRoute(BuildProducer<RouteBuildItem> routes,
-            BuildProducer<FilterBuildItem> filterProducer,
-            MetricsB5Configuration configuration) {
-//        routes.produce(new RouteBuildItem(configuration.path, new MetricsHandler(configuration.path), HandlerType.NORMAL));
+    void createRoute(
+            BuildProducer<FilterBuildItem> filterProducer) {
         filterProducer.produce(new FilterBuildItem(new MetricsExporter(),400));
     }
 

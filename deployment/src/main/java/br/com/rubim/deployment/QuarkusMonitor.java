@@ -2,7 +2,6 @@ package br.com.rubim.deployment;
 
 import br.com.rubim.runtime.config.DependencyHealth;
 import br.com.rubim.runtime.config.MetricsB5Configuration;
-import br.com.rubim.runtime.config.MetricsEnum;
 import br.com.rubim.runtime.filters.MetricsClientFilter;
 import br.com.rubim.runtime.filters.MetricsExporter;
 import br.com.rubim.runtime.filters.MetricsServiceFilter;
@@ -45,18 +44,6 @@ class QuarkusMonitor {
             providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
         }
 
-    }
-
-    private MetricBuildItem metric(MetricsEnum metric, MetricType type, Tag... tags) {
-        Metadata metadata = Metadata.builder()
-                .withName(metric.getName())
-                .withDisplayName(metric.getName())
-                .withType(type)
-                .withUnit("none")
-                .withDescription(metric.getDescription())
-                .reusable()
-                .build();
-        return new MetricBuildItem(metadata, true, "", tags);
     }
 
 }

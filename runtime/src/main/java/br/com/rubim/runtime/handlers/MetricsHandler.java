@@ -48,7 +48,8 @@ public class MetricsHandler implements Handler<RoutingContext> {
         }
     }
 
-    @Override public void handle(RoutingContext routingContext) {
+    @Override
+    public void handle(RoutingContext routingContext) {
         MetricsRequestHandler internalHandler = CDI.current().select(MetricsRequestHandler.class).get();
         HttpServerResponse response = routingContext.response();
         HttpServerRequest request = routingContext.request();

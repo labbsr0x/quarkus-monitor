@@ -11,4 +11,10 @@ public class MetricsB5Configuration {
      */
     @ConfigItem(defaultValue = "true")
     public boolean enable;
+
+    /**
+     * Define the path where the metrics are exposed.
+     */
+    @ConfigItem(defaultValue = "/metrics")
+    public String path;
 }

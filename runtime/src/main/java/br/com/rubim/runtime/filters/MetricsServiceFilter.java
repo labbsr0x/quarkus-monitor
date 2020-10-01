@@ -2,7 +2,10 @@ package br.com.rubim.runtime.filters;
 
 import br.com.rubim.runtime.config.MetricsEnum;
 import br.com.rubim.runtime.util.TagsUtil;
+import io.prometheus.client.Counter;
+import io.prometheus.client.Histogram;
 import io.smallrye.metrics.MetricRegistries;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 
@@ -14,10 +17,48 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Provider
 public class MetricsServiceFilter implements ContainerRequestFilter, ContainerResponseFilter {
+    private static double[] DEFAULT_BUCKETS = {0.1D, 0.3D, 1.5D, 10.5D};
+    static final Counter applicationInfo = Counter.build()
+            .name(MetricsEnum.APPLICATION_INFO.getName().toLowerCase())
+            .help(MetricsEnum.APPLICATION_INFO.getDescription())
+            .labelNames("version")
+            .register();
+
+    static Counter requestSecondsCount = Counter.build()
+            .name(MetricsEnum.REQUEST_SECONDS_COUNT.getName().toLowerCase())
+            .help(MetricsEnum.REQUEST_SECONDS_COUNT.getDescription())
+            .labelNames("type","method","addr","status","isError")
+            .register();
+
+    static Counter requestSecondsSum = Counter.build()
+            .name(MetricsEnum.REQUEST_SECONDS_SUM.getName().toLowerCase())
+            .help(MetricsEnum.REQUEST_SECONDS_SUM.getDescription())
+            .labelNames("type","method","addr","status","isError")
+            .register();
+
+    static Counter responseSizeBytes = Counter.build()
+            .name(MetricsEnum.RESPONSE_SIZE_BYTES.getName().toLowerCase())
+            .help(MetricsEnum.RESPONSE_SIZE_BYTES.getDescription())
+            .labelNames("type","method","addr","status","isError")
+            .register();
+
+    static Histogram requestSecondsBucket = Histogram.build().name(MetricsEnum.REQUEST_SECONDS_BUCKET.getName())
+                .help(MetricsEnum.REQUEST_SECONDS_BUCKET.getName())
+                .labelNames("type", "status", "method", "addr", "isError")
+                .buckets(DEFAULT_BUCKETS)
+                .register();
+
+    static {
+        applicationInfo.labels(ConfigProvider.getConfig()
+                        .getOptionalValue("quarkus.application.version", String.class).orElse("not-set")).inc();
+    }
+
     private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS";
 
     @Override
@@ -28,27 +69,16 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
     @Override
     public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext)
             throws IOException {
-        Tag[] tags = TagsUtil.extractTags(containerRequestContext, containerResponseContext);
-        MetricRegistries.get(MetricRegistry.Type.VENDOR)
-                .counter(MetricsEnum.REQUEST_SECONDS_COUNT.getDefaultMetadata(), tags)
-                .inc();
-
+        var labels = TagsUtil.extractLabelValues(containerRequestContext, containerResponseContext);
+        requestSecondsCount.labels(labels).inc();
         if (containerResponseContext.getLength() != -1) {
-            MetricRegistries.get(MetricRegistry.Type.VENDOR).counter(MetricsEnum.RESPONSE_SIZE_BYTES.getDefaultMetadata())
-                    .inc(containerResponseContext.getLength());
+            responseSizeBytes.labels(labels).inc(containerResponseContext.getLength());
         }
-        MetricRegistries.get(MetricRegistry.Type.VENDOR)
-                .counter(MetricsEnum.REQUEST_SECONDS_COUNT.getDefaultMetadata(),tags)
-                .inc();
         if (containerRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) containerRequestContext.getProperty("TIMER_INIT_TIME_MILLISECONDS");
             var duration = Duration.between(init, Instant.now()).toSeconds();
-            MetricRegistries.get(MetricRegistry.Type.VENDOR)
-                    .counter(MetricsEnum.REQUEST_SECONDS_SUM.getDefaultMetadata(), tags)
-                    .inc(duration);
-            MetricRegistries.get(MetricRegistry.Type.VENDOR)
-                    .timer(MetricsEnum.REQUEST_SECONDS_BUCKET.getDefaultMetadata(), tags)
-                    .update(duration, TimeUnit.SECONDS);
+            requestSecondsSum.labels(labels).inc(duration);
+            requestSecondsBucket.labels(labels).observe(duration);
         }
     }
 

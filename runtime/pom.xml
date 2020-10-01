@@ -31,6 +31,11 @@
             <artifactId>quarkus-smallrye-metrics</artifactId>
             <version>${quarkus.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>0.9.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

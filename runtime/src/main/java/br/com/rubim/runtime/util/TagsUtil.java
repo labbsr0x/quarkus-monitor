@@ -50,7 +50,8 @@ public class TagsUtil {
     }
 
   public static String[] extractLabelValues(UriInfo uriInfo, Request request,
-      int statusCode, WriterInterceptorContext context) {
+      WriterInterceptorContext context) {
+    int statusCode = FilterUtils.extractStatusCodeFromContext(context);
     return new String[]{
         HTTP,
         Integer.toString(statusCode),

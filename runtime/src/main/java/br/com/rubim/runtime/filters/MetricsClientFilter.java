@@ -15,7 +15,7 @@ import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-@Priority(Priorities.USER)
+@Priority(Priorities.AUTHENTICATION)
 public class MetricsClientFilter implements ClientResponseFilter, ClientRequestFilter {
     private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS_CLIENT";
 
@@ -40,12 +40,6 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
             var duration = Duration.between(init, Instant.now()).toSeconds();
             Metrics.dependencyRequestSeconds.labels(labels).observe(duration);
-        }
-
-        if (clientResponseContext.getLength() >= 0) {
-            Metrics.responseSizeBytes.labels(labels).inc(clientResponseContext.getLength());
-        } else {
-            Metrics.responseSizeBytes.labels(labels).inc(0);
         }
     }
 }

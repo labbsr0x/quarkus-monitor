@@ -35,9 +35,7 @@ public class MetricsServiceInterceptor implements WriterInterceptor {
       context.setOutputStream(outputStream);
       context.proceed();
       var labels = TagsUtil
-          .extractLabelValues(uriInfo, request,
-              Integer.valueOf(context.getProperty(FilterUtils.STATUS_CODE).toString())
-              , context);
+          .extractLabelValues(uriInfo, request, context);
       Metrics.responseSizeBytes.labels(labels).inc(outputStream.getByteCount());
     } else {
       context.proceed();

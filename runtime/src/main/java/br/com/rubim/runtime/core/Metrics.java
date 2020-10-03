@@ -54,7 +54,7 @@ public class Metrics {
     dependencyRequestSeconds = Histogram.build().name("dependency_request_seconds")
         .help(
             "records in a histogram the number of requests of a dependency and their duration in seconds")
-        .labelNames(NAME, TYPE, STATUS, METHOD, ADDR, IS_ERROR)
+        .labelNames(NAME, TYPE, STATUS, METHOD, ADDR, IS_ERROR, ERROR_MESSAGE)
         .buckets(bucketsValues)
         .register();
 

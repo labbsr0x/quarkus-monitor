@@ -30,7 +30,6 @@ public class MetricsServiceInterceptor implements WriterInterceptor {
       throws IOException, WebApplicationException {
     CountingOutputStream outputStream
         = new CountingOutputStream(context.getOutputStream());
-
     if (FilterUtils.validPath(uriInfo)) {
       context.setOutputStream(outputStream);
       context.proceed();

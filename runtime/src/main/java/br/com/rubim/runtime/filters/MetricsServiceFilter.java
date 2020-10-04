@@ -4,7 +4,6 @@ import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -45,8 +44,8 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
       if (containerRequestContext.getProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS) != null) {
         Instant init = (Instant) containerRequestContext
             .getProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS);
-        var duration = Duration.between(init, Instant.now()).toSeconds();
-        Metrics.requestSeconds.labels(labels).observe(duration);
+
+        Metrics.requestSeconds.labels(labels).observe(FilterUtils.calcTimeElapsedInSeconds(init));
       }
     }
   }

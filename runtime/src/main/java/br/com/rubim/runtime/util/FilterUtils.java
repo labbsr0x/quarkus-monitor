@@ -1,5 +1,7 @@
 package br.com.rubim.runtime.util;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -25,5 +27,10 @@ public class FilterUtils {
 
   public static Integer extractStatusCodeFromContext(WriterInterceptorContext context) {
     return Integer.valueOf(context.getProperty(STATUS_CODE).toString());
+  }
+
+  public static double calcTimeElapsedInSeconds(Instant init) {
+    var finish = Instant.now();
+    return Duration.between(init, finish).toNanos() / 1000000000d;
   }
 }

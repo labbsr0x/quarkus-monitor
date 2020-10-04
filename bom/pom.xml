@@ -19,6 +19,55 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+          <!-- RESTEasy dependencies, imported as a BOM -->
+          <!-- As RESTEasy also imports Jackson, we need to import its BOM after the Jackson BOM -->
+          <dependency>
+            <artifactId>resteasy-bom</artifactId>
+            <groupId>org.jboss.resteasy</groupId>
+            <scope>import</scope>
+            <type>pom</type>
+            <version>${resteasy.version}</version>
+          </dependency>
+
+          <!-- JUnit 5 dependencies, imported as a BOM -->
+          <dependency>
+            <artifactId>junit-bom</artifactId>
+            <groupId>org.junit</groupId>
+            <scope>import</scope>
+            <type>pom</type>
+            <version>${junit.jupiter.version}</version>
+          </dependency>
+
+          <!-- Quarkus test dependencies -->
+          <dependency>
+            <artifactId>quarkus-junit5</artifactId>
+            <groupId>io.quarkus</groupId>
+            <version>${quarkus.version}</version>
+          </dependency>
+          <dependency>
+            <artifactId>quarkus-junit5-internal</artifactId>
+            <groupId>io.quarkus</groupId>
+            <version>${quarkus.version}</version>
+          </dependency>
+          <dependency>
+            <artifactId>quarkus-test-common</artifactId>
+            <groupId>io.quarkus</groupId>
+            <version>${quarkus.version}</version>
+          </dependency>
+          <dependency>
+            <artifactId>quarkus-junit5-mockito</artifactId>
+            <groupId>io.quarkus</groupId>
+            <version>${quarkus.version}</version>
+          </dependency>
+
         </dependencies>
+
     </dependencyManagement>
+
+  <properties>
+    <junit.jupiter.version>5.6.2</junit.jupiter.version>
+    <rest-assured.version>4.3.0</rest-assured.version>
+    <resteasy.version>4.5.6.Final</resteasy.version>
+  </properties>
 </project>

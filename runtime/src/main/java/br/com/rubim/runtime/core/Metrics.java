@@ -12,6 +12,8 @@ public class Metrics {
   public static final Histogram dependencyRequestSeconds;
   public static final Counter responseSizeBytes;
   public static final Gauge dependencyUp;
+  public static final Counter applicationInfo;
+
   private static final String TYPE = "type";
   private static final String STATUS = "status";
   private static final String METHOD = "method";
@@ -19,7 +21,6 @@ public class Metrics {
   private static final String IS_ERROR = "isError";
   private static final String ERROR_MESSAGE = "errorMessage";
   private static final String NAME = "name";
-  private static final Counter applicationInfo;
 
   static {
     double[] bucketsValues = Arrays.stream(

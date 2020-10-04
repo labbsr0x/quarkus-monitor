@@ -1,10 +1,10 @@
 package br.com.rubim.runtime.filters;
 
 import br.com.rubim.runtime.core.Metrics;
+import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -38,8 +38,8 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
 
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
-            var duration = Duration.between(init, Instant.now()).toSeconds();
-            Metrics.dependencyRequestSeconds.labels(labels).observe(duration);
+            Metrics.dependencyRequestSeconds.labels(labels)
+                .observe(FilterUtils.calcTimeElapsedInSeconds(init));
         }
     }
 }

@@ -81,9 +81,9 @@ Property Name            | Description                                          
 ------------------------ | --------------------------------------------------------- | ---------
 enable                   | Enable the extension.                                     | true
 path                     | Define the path where the metrics are exposed.            | /metrics
-exclusions               | List of paths comma-separated where metrics are not apply.| /metrics
+exclusions               | List of paths comma-separated where metrics are not apply | /metrics
 enable-http-response-size| Enabled the metric for response size                      | false
-buckets                  | List of values for the buckets used in b5 metrics         | 0.1, 0.3, 1.5, 10.5
+buckets                  | Values in seconds for the buckets used in b5 metrics      | 0.1, 0.3, 1.5, 10.5
 error-message            | Key for error messages in the header or request attribute | error-info
 
 

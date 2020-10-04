@@ -85,7 +85,7 @@
     <artifactId>quarkus-monitor-parent</artifactId>
     <groupId>io.github.marcelorubim</groupId>
     <relativePath>../</relativePath>
-    <version>1.0.0</version>
+    <version>0.0.9-SNAPSHOT</version>
   </parent>
 
   <properties>

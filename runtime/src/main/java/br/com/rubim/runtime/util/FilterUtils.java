@@ -1,5 +1,7 @@
 package br.com.rubim.runtime.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -17,6 +19,7 @@ public class FilterUtils {
   private static final Collection<String> exclusions = Arrays.stream(ConfigProvider.getConfig()
       .getValue("quarkus.b5.monitor.exclusions", String.class).split(","))
       .map(Object::toString).map(String::trim).collect(Collectors.toList());
+  private static final BigDecimal MULTIPLIER_NANO_TO_SECONDS = new BigDecimal(1.0E9D);
 
   private FilterUtils() {
   }
@@ -31,6 +34,7 @@ public class FilterUtils {
 
   public static double calcTimeElapsedInSeconds(Instant init) {
     var finish = Instant.now();
-    return Duration.between(init, finish).toNanos() / 1000000000d;
+    BigDecimal diff = new BigDecimal(Duration.between(init, finish).toNanos());
+    return diff.divide(MULTIPLIER_NANO_TO_SECONDS, 9, RoundingMode.HALF_UP).doubleValue();
   }
 }

@@ -1,6 +1,7 @@
 package br.com.rubim.deployment;
 
 import br.com.rubim.runtime.config.MetricsB5Configuration;
+import br.com.rubim.runtime.core.StartMetrics;
 import br.com.rubim.runtime.filters.MetricsClientFilter;
 import br.com.rubim.runtime.filters.MetricsExporter;
 import br.com.rubim.runtime.filters.MetricsServiceFilter;
@@ -17,6 +18,8 @@ class QuarkusMonitor {
     @BuildStep
     AdditionalBeanBuildItem registerAdditionalBeans() {
         return new AdditionalBeanBuildItem.Builder()
+            .setUnremovable()
+            .addBeanClass(StartMetrics.class)
             .build();
     }
 

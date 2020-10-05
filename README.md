@@ -67,9 +67,9 @@ Import the following dependency to your project:
 
 ```xml
 <dependency>
-    <groupId>br.com.labbs</groupId>
-    <artifactId>quarkus-b5-monitor</artifactId>
-    <version>${quarkus-b5-monitor-version}</version>
+  <groupId>io.github.marcelorubim</groupId>
+  <artifactId>quarkus-monitor</artifactId>
+  <version>0.0.9</version>
 </dependency>
 ```
 

@@ -55,7 +55,7 @@
         <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     </properties>
     <url>https://github.com/marcelorubim/quarkus-monitor/</url>
-    <version>0.0.9-SNAPSHOT</version>
+    <version>0.0.9</version>
 
     <modules>
         <module>bom</module>
@@ -67,7 +67,7 @@
         <url>https://github.com/marcelorubim/quarkus-monitor/</url>
         <connection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</connection>
         <developerConnection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.0.9</tag>
     </scm>
     <licenses>
         <license>

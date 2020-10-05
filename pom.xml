@@ -6,23 +6,25 @@
     <name>quarkus-monitor-parent</name>
     <description>Extension to add Big Brother Metrics</description>
     <packaging>pom</packaging>
-    <version>0.0.9-SNAPSHOT</version>
-    <url>https://github.com/marcelorubim/quarkus-monitor/</url>
     <developers>
         <developer>
             <name>Marcelo Rubim</name>
             <email>marcelorubim@gmail.com</email>
         </developer>
+        <developer>
+            <email>carlospanarello@gmail.com</email>
+            <name>Carlos E Panarelo</name>
+        </developer>
     </developers>
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,7 +32,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <quarkus.version>1.8.0.Final</quarkus.version>
+        <quarkus.version>1.8.1.Final</quarkus.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,6 +54,8 @@
 
         <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     </properties>
+    <url>https://github.com/marcelorubim/quarkus-monitor/</url>
+    <version>0.0.9-SNAPSHOT</version>
 
     <modules>
         <module>bom</module>

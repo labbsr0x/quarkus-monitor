@@ -1,20 +1,21 @@
 package br.com.rubim.runtime.filters;
 
 import br.com.rubim.runtime.core.Metrics;
+import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
-
-import javax.inject.Inject;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.time.Instant;
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.time.Instant;
 
 @Provider
+@Priority(Priorities.AUTHENTICATION)
 public class MetricsClientFilter implements ClientResponseFilter, ClientRequestFilter {
     private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS_CLIENT";
 
@@ -34,10 +35,11 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
         } else if (clientResponseContext.getStatus() >= 500) {
             Metrics.dependencyUp.labels(method.getDeclaringClass().getCanonicalName()).set(0);
         }
+
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
-            var duration = Duration.between(init, Instant.now()).toSeconds();
-            Metrics.dependencyRequestSeconds.labels(labels).observe(duration);
+            Metrics.dependencyRequestSeconds.labels(labels)
+                .observe(FilterUtils.calcTimeElapsedInSeconds(init));
         }
     }
 }

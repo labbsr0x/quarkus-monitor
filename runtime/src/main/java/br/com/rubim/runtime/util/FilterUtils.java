@@ -23,7 +23,7 @@ public class FilterUtils {
   public static final String STATUS_CODE = "STATUS_CODE";
 
   private static final Collection<String> exclusions = Arrays.stream(ConfigProvider.getConfig()
-      .getValue("quarkus.b5.monitor.exclusions", String.class).split(","))
+      .getOptionalValue("quarkus.b5.monitor.exclusions", String.class).orElse("").split(","))
       .map(Object::toString).map(String::trim).collect(Collectors.toList());
   private static final BigDecimal MULTIPLIER_NANO_TO_SECONDS = new BigDecimal(1.0E9D);
 

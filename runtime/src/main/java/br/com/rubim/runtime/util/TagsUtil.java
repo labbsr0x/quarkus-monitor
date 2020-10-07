@@ -14,7 +14,7 @@ public class TagsUtil {
 
   private static final String HTTP = "http";
   private static final String errorMessageKey = ConfigProvider.getConfig()
-      .getValue("quarkus.b5.monitor.error-message", String.class);
+      .getOptionalValue("quarkus.b5.monitor.error-message", String.class).orElse("error-info");
 
   private TagsUtil() {
   }

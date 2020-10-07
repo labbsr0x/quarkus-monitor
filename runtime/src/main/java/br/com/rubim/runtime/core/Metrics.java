@@ -24,7 +24,8 @@ public class Metrics {
 
   static {
     double[] bucketsValues = Arrays.stream(
-        ConfigProvider.getConfig().getValue("quarkus.b5.monitor.buckets", String.class).split(","))
+        ConfigProvider.getConfig().getOptionalValue("quarkus.b5.monitor.buckets", String.class)
+            .orElse("0.1, 0.3, 1.5, 10.5").split(","))
         .map(String::trim).mapToDouble(Double::parseDouble).toArray();
     applicationInfo = Counter.build()
         .name("application_info")

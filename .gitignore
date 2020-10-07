@@ -7,7 +7,6 @@
 runtime/target
 deployment/target
 target/
-.gitconfig
 
 ### Eclipse ###
 .metadata

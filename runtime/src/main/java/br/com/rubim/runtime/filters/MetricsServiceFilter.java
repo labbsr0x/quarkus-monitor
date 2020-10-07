@@ -19,12 +19,15 @@ import javax.ws.rs.ext.Provider;
 @Priority(Priorities.AUTHENTICATION)
 public class MetricsServiceFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
+  private static final String IS_VALID_PATH_FOR_METRICS = "isValidPathForMetrics";
   @Context
   UriInfo uriInfo;
 
   @Override
   public void filter(ContainerRequestContext request) throws IOException {
-    if (FilterUtils.validPath(uriInfo)) {
+    var isValid = FilterUtils.validPath(uriInfo);
+    request.setProperty(IS_VALID_PATH_FOR_METRICS, isValid);
+    if (isValid) {
       request.setProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS, Instant.now());
     }
   }
@@ -34,7 +37,8 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
       ContainerRequestContext containerRequestContext,
       ContainerResponseContext containerResponseContext)
       throws IOException {
-    if (FilterUtils.validPath(uriInfo)) {
+    if (Boolean
+        .valueOf(containerRequestContext.getProperty(IS_VALID_PATH_FOR_METRICS).toString())) {
       var labels = TagsUtil.extractLabelValues(containerRequestContext, containerResponseContext);
 
       // Foi a forma que achei para passar o status code no aroundWriteTo

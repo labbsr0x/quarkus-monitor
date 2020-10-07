@@ -58,9 +58,6 @@ public class Metrics {
         .labelNames(NAME, TYPE, STATUS, METHOD, ADDR, IS_ERROR, ERROR_MESSAGE)
         .buckets(bucketsValues)
         .register();
-
-    applicationInfo.labels(ConfigProvider.getConfig()
-        .getOptionalValue("quarkus.application.version", String.class).orElse("not-set")).inc();
   }
 
   private Metrics() {

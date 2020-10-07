@@ -21,6 +21,9 @@ public class FilterUtils {
 
   public static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS";
   public static final String STATUS_CODE = "STATUS_CODE";
+  public static final String VALID_PATH_FOR_METRICS = "VALID_PATH_FOR_METRICS";
+  public static final String PATH_WITH_PARAM_ID = "PATH_WITH_PARAM_ID";
+
 
   private static final Collection<String> exclusions = Arrays.stream(ConfigProvider.getConfig()
       .getOptionalValue("quarkus.b5.monitor.exclusions", String.class).orElse("").split(","))
@@ -30,12 +33,12 @@ public class FilterUtils {
   private FilterUtils() {
   }
 
-  private static boolean excludePath(UriInfo uriInfo, String pathToExclude) {
-    return replacePathParamValueForPathParamId(uriInfo).equalsIgnoreCase(pathToExclude);
-  }
+//  private static boolean excludePath(UriInfo uriInfo, String pathToExclude) {
+//    return replacePathParamValueForPathParamId(uriInfo).equalsIgnoreCase(pathToExclude);
+//  }
 
-  public static boolean validPath(UriInfo uriInfo) {
-    return exclusions.stream().noneMatch(path -> excludePath(uriInfo, path));
+  public static boolean validPath(String pathWithParamId) {
+    return exclusions.stream().noneMatch(path -> path.equalsIgnoreCase(pathWithParamId));
   }
 
   public static Integer extractStatusCodeFromContext(WriterInterceptorContext context) {
@@ -48,7 +51,7 @@ public class FilterUtils {
     return diff.divide(MULTIPLIER_NANO_TO_SECONDS, 9, RoundingMode.HALF_UP).doubleValue();
   }
 
-  static String replacePathParamValueForPathParamId(UriInfo uriInfo) {
+  public static String replacePathParamValueForPathParamId(UriInfo uriInfo) {
     StringBuilder sb = new StringBuilder();
 
     Map<Integer, String> indices = new HashMap<>();

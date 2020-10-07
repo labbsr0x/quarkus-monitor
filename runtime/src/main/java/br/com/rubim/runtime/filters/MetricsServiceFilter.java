@@ -18,13 +18,16 @@ import javax.ws.rs.ext.Provider;
 @Priority(Priorities.AUTHENTICATION)
 public class MetricsServiceFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-  private static final String IS_VALID_PATH_FOR_METRICS = "isValidPathForMetrics";
 
   @Override
   public void filter(ContainerRequestContext request) throws IOException {
-    var isValid = FilterUtils.validPath(request.getUriInfo());
-    request.setProperty(IS_VALID_PATH_FOR_METRICS, isValid);
+    var pathWithId = FilterUtils.replacePathParamValueForPathParamId(request.getUriInfo());
+    var isValid = FilterUtils.validPath(pathWithId);
+
+    request.setProperty(FilterUtils.VALID_PATH_FOR_METRICS, isValid);
+
     if (isValid) {
+      request.setProperty(FilterUtils.PATH_WITH_PARAM_ID, pathWithId);
       request.setProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS, Instant.now());
     }
   }
@@ -53,6 +56,7 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
 
   private boolean getValidPathFromRequest(ContainerRequestContext request) {
     return Boolean.valueOf(
-        Optional.ofNullable(request.getProperty(IS_VALID_PATH_FOR_METRICS)).orElse("").toString());
+        Optional.ofNullable(request.getProperty(FilterUtils.VALID_PATH_FOR_METRICS))
+            .orElse("").toString());
   }
 }

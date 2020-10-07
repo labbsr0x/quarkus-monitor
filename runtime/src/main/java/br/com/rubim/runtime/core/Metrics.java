@@ -27,6 +27,7 @@ public class Metrics {
         ConfigProvider.getConfig().getOptionalValue("quarkus.b5.monitor.buckets", String.class)
             .orElse("0.1, 0.3, 1.5, 10.5").split(","))
         .map(String::trim).mapToDouble(Double::parseDouble).toArray();
+
     applicationInfo = Counter.build()
         .name("application_info")
         .help("holds static info of an application, such as it's semantic version number")

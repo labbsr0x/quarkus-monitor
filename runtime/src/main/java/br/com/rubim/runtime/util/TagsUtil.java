@@ -1,6 +1,7 @@
 package br.com.rubim.runtime.util;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -21,11 +22,13 @@ public class TagsUtil {
 
   public static String[] extractLabelValues(ContainerRequestContext request,
       ContainerResponseContext response) {
+    var pathWithParamId = (Optional.ofNullable(request.getProperty(FilterUtils.PATH_WITH_PARAM_ID))
+        .orElse(request.getUriInfo().getPath())).toString();
     return new String[]{
         HTTP,
         Integer.toString(response.getStatus()),
         request.getMethod(),
-        FilterUtils.replacePathParamValueForPathParamId(request.getUriInfo()),
+        pathWithParamId,
         Boolean.toString(isError(response.getStatus())),
         extractMessageError(request, response)
     };
@@ -35,7 +38,6 @@ public class TagsUtil {
       ClientResponseContext response) {
     Method method = (Method) request
         .getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
-
     return new String[]{
         method.getDeclaringClass().getCanonicalName(),
         HTTP,
@@ -50,11 +52,13 @@ public class TagsUtil {
   public static String[] extractLabelValues(UriInfo uriInfo, Request request,
       WriterInterceptorContext context) {
     int statusCode = FilterUtils.extractStatusCodeFromContext(context);
+    var pathWithParamId = (Optional.ofNullable(context.getProperty(FilterUtils.PATH_WITH_PARAM_ID))
+        .orElse(uriInfo.getPath())).toString();
     return new String[]{
         HTTP,
         Integer.toString(statusCode),
         request.getMethod(),
-        FilterUtils.replacePathParamValueForPathParamId(uriInfo),
+        pathWithParamId,
         Boolean.toString(isError(statusCode)),
         extractMessageError(context)
     };

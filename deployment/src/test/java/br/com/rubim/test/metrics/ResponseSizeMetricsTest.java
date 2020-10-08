@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.MetricsFilterForError;
-import br.com.rubim.test.RequestResource;
+import br.com.rubim.test.fake.filters.MetricsFilterForError;
+import br.com.rubim.test.fake.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -50,8 +50,8 @@ public class ResponseSizeMetricsTest {
     when().get(SIMPLE_PATH).then().statusCode(200);
     var samples = Metrics.responseSizeBytes.collect().get(0).samples;
 
-    assertEquals(samples.size(),
-        1, "Metric response_size_bytes with wrong number of samples");
+    assertEquals(1, samples.size(),
+        "Metric response_size_bytes with wrong number of samples");
 
     assertArrayEquals(tagValues, samples.get(0).labelValues.toArray(),
         "Tags of response_size_bytes with wrong values");

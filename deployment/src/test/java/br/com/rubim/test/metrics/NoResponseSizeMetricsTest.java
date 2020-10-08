@@ -4,8 +4,8 @@ import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.MetricsFilterForError;
-import br.com.rubim.test.RequestResource;
+import br.com.rubim.test.fake.filters.MetricsFilterForError;
+import br.com.rubim.test.fake.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -32,7 +32,6 @@ public class NoResponseSizeMetricsTest {
     when().get(SIMPLE_PATH).then().statusCode(200);
     var samples = Metrics.responseSizeBytes.collect().get(0).samples;
 
-    assertEquals(samples.size(),
-        0, "Metric response_size_bytes created besides disable");
+    assertEquals(0d, samples.size(), "Metric response_size_bytes created besides disable");
   }
 }

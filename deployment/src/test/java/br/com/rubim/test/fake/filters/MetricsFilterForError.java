@@ -1,8 +1,12 @@
-package br.com.rubim.test;
+package br.com.rubim.test.fake.filters;
 
 import java.io.IOException;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.client.ClientResponseContext;
+import javax.ws.rs.client.ClientResponseFilter;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -12,7 +16,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Provider
 @Priority(Priorities.USER)
-public class MetricsFilterForError implements ContainerRequestFilter, ContainerResponseFilter {
+public class MetricsFilterForError implements ContainerRequestFilter, ContainerResponseFilter,
+    ClientResponseFilter, ClientRequestFilter {
 
   @ConfigProperty(name = "quarkus.b5.monitor.error-message")
   String errorKey;
@@ -29,6 +34,19 @@ public class MetricsFilterForError implements ContainerRequestFilter, ContainerR
 
     if (response.getStatus() >= 400) {
       request.setProperty(errorKey, "error with describe in container");
+    }
+  }
+
+  @Override
+  public void filter(ClientRequestContext clientRequestContext) throws IOException {
+
+  }
+
+  @Override
+  public void filter(ClientRequestContext clientRequestContext,
+      ClientResponseContext clientResponseContext) throws IOException {
+    if (clientResponseContext.getStatus() >= 400) {
+      clientRequestContext.setProperty(errorKey, "error with describe in container");
     }
   }
 }

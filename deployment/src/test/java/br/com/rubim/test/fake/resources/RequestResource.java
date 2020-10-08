@@ -1,4 +1,4 @@
-package br.com.rubim.test;
+package br.com.rubim.test.fake.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

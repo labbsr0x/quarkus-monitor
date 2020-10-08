@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.MetricsFilterForError;
-import br.com.rubim.test.RequestResource;
+import br.com.rubim.test.fake.filters.MetricsFilterForError;
+import br.com.rubim.test.fake.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;

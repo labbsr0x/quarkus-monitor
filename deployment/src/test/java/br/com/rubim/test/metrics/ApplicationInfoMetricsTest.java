@@ -3,7 +3,7 @@ package br.com.rubim.test.metrics;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.RequestResource;
+import br.com.rubim.test.fake.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

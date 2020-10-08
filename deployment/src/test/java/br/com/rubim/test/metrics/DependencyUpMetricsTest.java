@@ -16,7 +16,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class DependencyUpMetricTest {
+public class DependencyUpMetricsTest {
 
   private static final String SIMPLE_PATH = "/dep/simple";
 
@@ -67,7 +67,6 @@ public class DependencyUpMetricTest {
       assertEquals(1d, samples.get(0).value, "Metric dependency_up is down with status code 400");
     }
   }
-
 
   @Test
   void testDependencyDownMetric() {

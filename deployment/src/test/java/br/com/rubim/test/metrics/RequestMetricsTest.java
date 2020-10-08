@@ -55,8 +55,8 @@ class RequestMetricsTest {
     when().get(SIMPLE_PATH).then().statusCode(200);
     var samples = Metrics.requestSeconds.collect().get(0).samples;
 
-    assertEquals(samples.size(),
-        buckets.size() + 3, "Metric with wrong number of samples");
+    assertEquals(
+        buckets.size() + 3, samples.size(), "Metric with wrong number of samples");
 
     var sampleBucket = samples.stream()
         .filter(sample -> "request_seconds_bucket".equals(sample.name)).findFirst();

@@ -5,26 +5,29 @@ import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Optional;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class MetricsServiceFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-  @Context
-  UriInfo uriInfo;
 
   @Override
   public void filter(ContainerRequestContext request) throws IOException {
-    if (FilterUtils.validPath(uriInfo)) {
+    var pathWithId = FilterUtils.replacePathParamValueForPathParamId(request.getUriInfo());
+    var isValid = FilterUtils.validPath(pathWithId);
+
+    request.setProperty(FilterUtils.VALID_PATH_FOR_METRICS, isValid);
+
+    if (isValid) {
+      request.setProperty(FilterUtils.PATH_WITH_PARAM_ID, pathWithId);
       request.setProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS, Instant.now());
     }
   }
@@ -34,7 +37,8 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
       ContainerRequestContext containerRequestContext,
       ContainerResponseContext containerResponseContext)
       throws IOException {
-    if (FilterUtils.validPath(uriInfo)) {
+
+    if (getValidPathFromRequest(containerRequestContext)) {
       var labels = TagsUtil.extractLabelValues(containerRequestContext, containerResponseContext);
 
       // Foi a forma que achei para passar o status code no aroundWriteTo
@@ -48,5 +52,11 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
         Metrics.requestSeconds.labels(labels).observe(FilterUtils.calcTimeElapsedInSeconds(init));
       }
     }
+  }
+
+  private boolean getValidPathFromRequest(ContainerRequestContext request) {
+    return Boolean.valueOf(
+        Optional.ofNullable(request.getProperty(FilterUtils.VALID_PATH_FOR_METRICS))
+            .orElse("").toString());
   }
 }

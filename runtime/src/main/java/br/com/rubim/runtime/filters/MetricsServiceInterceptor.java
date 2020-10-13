@@ -4,6 +4,7 @@ import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
 import java.io.IOException;
+import java.util.Optional;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
@@ -30,7 +31,8 @@ public class MetricsServiceInterceptor implements WriterInterceptor {
       throws IOException, WebApplicationException {
     CountingOutputStream outputStream
         = new CountingOutputStream(context.getOutputStream());
-    if (FilterUtils.validPath(uriInfo)) {
+
+    if (getValidPathFromRequest(context)) {
       context.setOutputStream(outputStream);
       context.proceed();
       var labels = TagsUtil
@@ -39,5 +41,11 @@ public class MetricsServiceInterceptor implements WriterInterceptor {
     } else {
       context.proceed();
     }
+  }
+
+  private boolean getValidPathFromRequest(WriterInterceptorContext context) {
+    return Boolean.valueOf(
+        Optional.ofNullable(context.getProperty(FilterUtils.VALID_PATH_FOR_METRICS))
+            .orElse("").toString());
   }
 }

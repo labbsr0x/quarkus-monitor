@@ -1,4 +1,4 @@
-package br.com.rubim.test;
+package br.com.rubim.test.fake.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -6,6 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/request")
 public class RequestResource {
@@ -63,9 +64,26 @@ public class RequestResource {
   }
 
   @GET
-  @Path("/metric-exclusion-/{id}")
+  @Path("/metric-exclusion-two/{id}")
   @Produces(MediaType.TEXT_PLAIN)
   public String metricExclusionTwo(final @PathParam("path") String myparam) {
     return "OK";
   }
+
+  @GET
+  @Path("/with-error/header/{status}/{errorKey}")
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response withErrorInHeader(final @PathParam("status") Integer status,
+      final @PathParam("errorKey") String errorKey) {
+    return Response.status(status).header(errorKey, "error with describe in header").entity("OK")
+        .build();
+  }
+
+  @GET
+  @Path("/with-error/container/{status}")
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response withErrorInContainer(final @PathParam("status") Integer status) {
+    return Response.status(status).entity("OK").build();
+  }
+
 }

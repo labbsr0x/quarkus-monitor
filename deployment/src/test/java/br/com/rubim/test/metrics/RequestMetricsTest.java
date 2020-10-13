@@ -6,31 +6,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.RequestResource;
+import br.com.rubim.test.fake.filters.MetricsFilterForError;
+import br.com.rubim.test.fake.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import java.util.List;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class RequestMetricsTest {
+class RequestMetricsTest {
 
   private static final String SIMPLE_PATH = "/request/simple";
+  private static final String ERROR_PATH = "/request/with-error/";
+  private static final String EXCLUSION_BASE_PATH = "/request/metric-exclusion-";
 
   @RegisterExtension
   static QuarkusUnitTest test = new QuarkusUnitTest()
       .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
-              .addClasses(RequestResource.class)
-              .addAsResource("application-um.properties", "application.properties")
-          //.addAsResource(new StringAsset("quarkus.b5.monitor.exclusions=/metric-exclusion-one,/metric-exclusion-two/{id}"),"application.properties")
+          .addClasses(RequestResource.class, MetricsFilterForError.class)
+          .addAsResource(
+              new StringAsset(
+                  "quarkus.b5.monitor.exclusions=/request/metric-exclusion-one,/request/metric-exclusion-two,/request/metric-exclusion-two/{id}\n"
+                      + "quarkus.b5.monitor.buckets=0.05,0.1,0.2,0.3,0.5,1.0,1.5,2,3,5,10.5\n"),
+              "application.properties")
       );
+
   @ConfigProperty(name = "quarkus.b5.monitor.buckets")
   List<String> buckets;
 
+  @ConfigProperty(name = "quarkus.b5.monitor.error-message")
+  String errorKey;
+
+  @BeforeEach
+  void cleanMetrics() {
+    Metrics.requestSeconds.clear();
+  }
+
   @Test
-  public void testCreatingRequestMetrics() {
+  void testCreatingRequestMetrics() {
     var tagValues = new String[]{"http", "200", "GET", SIMPLE_PATH, "false", "", buckets.get(0)};
     var tagNames = new String[]{"type", "status", "method", "addr", "isError", "errorMessage",
         "le"};
@@ -38,8 +55,8 @@ public class RequestMetricsTest {
     when().get(SIMPLE_PATH).then().statusCode(200);
     var samples = Metrics.requestSeconds.collect().get(0).samples;
 
-    assertEquals(samples.size(),
-        buckets.size() + 3, "Metric with wrong number of samples");
+    assertEquals(
+        buckets.size() + 3, samples.size(), "Metric with wrong number of samples");
 
     var sampleBucket = samples.stream()
         .filter(sample -> "request_seconds_bucket".equals(sample.name)).findFirst();
@@ -76,4 +93,39 @@ public class RequestMetricsTest {
         .filter(sample -> "request_seconds_count".equals(sample.name)).findFirst()
         .ifPresent(s -> assertEquals(2, s.value, "Metric request_seconds_count with wrong value"));
   }
+
+  @Test
+  void testCreatingRequestMetricsWithTagErrorInHeader() {
+    when().get(ERROR_PATH + "header/400" + "/" + errorKey).then().statusCode(400);
+
+    var sample = Metrics.requestSeconds.collect().get(0).samples.get(0);
+
+    assertEquals("true", sample.labelValues.get(4), "Receive wrong value for Tag isError");
+    assertEquals("error with describe in header", sample.labelValues.get(5),
+        "Receive wrong value for Tag error message");
+  }
+
+  @Test
+  void testCreatingRequestMetricsWithTagErrorInContainer() {
+    when().get(ERROR_PATH + "container/400").then().statusCode(400);
+
+    var sample = Metrics.requestSeconds.collect().get(0).samples.get(0);
+
+    assertEquals("true", sample.labelValues.get(4), "Receive wrong value for Tag isError");
+    assertEquals("error with describe in container", sample.labelValues.get(5),
+        "Receive wrong value for Tag error message");
+  }
+
+  @Test
+  void testCreatingRequestMetricsExclusions() {
+    when().get(EXCLUSION_BASE_PATH + "one").then().statusCode(200);
+    assertEquals(0, Metrics.requestSeconds.collect().get(0).samples.size());
+
+    when().get(EXCLUSION_BASE_PATH + "two").then().statusCode(200);
+    assertEquals(0, Metrics.requestSeconds.collect().get(0).samples.size());
+
+    when().get(EXCLUSION_BASE_PATH + "two/1").then().statusCode(200);
+    assertEquals(0, Metrics.requestSeconds.collect().get(0).samples.size());
+  }
+
 }

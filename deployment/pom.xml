@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>quarkus-monitor-deployment</artifactId>
-
+  <artifactId>quarkus-monitor-deployment</artifactId>
   <build>
     <plugins>
       <plugin>
@@ -17,60 +15,67 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
+        </configuration>
+        <version>${maven.surefire.version}</version>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc-deployment</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-deployment</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-deployment</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jsonp-deployment</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-metrics-deployment</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-metrics-spi</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-core-deployment</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.marcelorubim</groupId>
-            <artifactId>quarkus-monitor</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <artifactId>quarkus-monitor</artifactId>
+      <groupId>io.github.marcelorubim</groupId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <artifactId>quarkus-arc-deployment</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>quarkus-resteasy-deployment</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>quarkus-rest-client-deployment</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>quarkus-jsonp-deployment</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>quarkus-smallrye-metrics-deployment</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>quarkus-smallrye-metrics-spi</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>quarkus-core-deployment</artifactId>
+      <groupId>io.quarkus</groupId>
+      <version>${quarkus.version}</version>
+    </dependency>
+
     <dependency>
       <artifactId>quarkus-junit5-internal</artifactId>
       <groupId>io.quarkus</groupId>
       <scope>test</scope>
       <version>${quarkus.version}</version>
     </dependency>
-    <!--        <dependency>-->
-    <!--            <groupId>org.jboss.resteasy</groupId>-->
-    <!--            <artifactId>resteasy-client</artifactId>-->
-    <!--            <scope>test</scope>-->
-    <!--        </dependency>-->
     <dependency>
       <artifactId>rest-assured</artifactId>
       <groupId>io.rest-assured</groupId>
@@ -78,6 +83,7 @@
       <version>${rest-assured.version}</version>
     </dependency>
   </dependencies>
+  <modelVersion>4.0.0</modelVersion>
 
   <name>Extension to add Big Brother Metrics - Deployment</name>
 
@@ -85,11 +91,12 @@
     <artifactId>quarkus-monitor-parent</artifactId>
     <groupId>io.github.marcelorubim</groupId>
     <relativePath>../</relativePath>
-    <version>0.0.10-SNAPSHOT</version>
+    <version>0.1.0</version>
   </parent>
 
   <properties>
     <junit.jupiter.version>5.6.2</junit.jupiter.version>
+    <maven.surefire.version>3.0.0-M4</maven.surefire.version>
     <rest-assured.version>4.3.0</rest-assured.version>
     <resteasy.version>4.5.6.Final</resteasy.version>
   </properties>

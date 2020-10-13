@@ -1,89 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>quarkus-monitor-parent</artifactId>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
           <configuration>
+            <serverId>ossrh</serverId>
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-            <serverId>ossrh</serverId>
           </configuration>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
           <extensions>true</extensions>
           <groupId>org.sonatype.plugins</groupId>
           <version>1.6.7</version>
         </plugin>
         <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven-deploy-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <autoVersionSubmodules>true</autoVersionSubmodules>
+            <tagNameFormat>@{project.version}</tagNameFormat>
+            <useReleaseProfile>false</useReleaseProfile>
             <goals>deploy</goals>
             <pushChanges>true</pushChanges>
             <releaseProfiles>release</releaseProfiles>
-            <tagNameFormat>@{project.version}</tagNameFormat>
-            <useReleaseProfile>false</useReleaseProfile>
           </configuration>
+          <artifactId>maven-release-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
           <version>${maven-release-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-enforcer-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
           <version>${maven-enforcer-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-eclipse-plugin</artifactId>
           <configuration>
-            <downloadJavadocs>true</downloadJavadocs>
             <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
           </configuration>
+          <artifactId>maven-eclipse-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
           <version>${maven-eclipse-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-idea-plugin</artifactId>
           <configuration>
-            <downloadJavadocs>true</downloadJavadocs>
             <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
           </configuration>
+          <artifactId>maven-idea-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
           <version>${maven-idea-plugin-version}</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
           <configuration>
             <systemProperties>
               <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             </systemProperties>
           </configuration>
-          <groupId>org.apache.maven.plugins</groupId>
-          <version>${maven-surefire-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-failsafe-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
           <version>${maven-failsafe-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
           <version>${maven-jar-plugin-version}</version>
         </plugin>
         <plugin>
-          <artifactId>quarkus-maven-plugin</artifactId>
           <groupId>io.quarkus</groupId>
+          <artifactId>quarkus-maven-plugin</artifactId>
           <version>${quarkus.version}</version>
         </plugin>
       </plugins>
@@ -91,59 +90,60 @@
 
     <plugins>
       <plugin>
-        <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
+            <id>attach-sources</id>
             <goals>
               <goal>jar-no-fork</goal>
             </goals>
-            <id>attach-sources</id>
           </execution>
         </executions>
+        <artifactId>maven-source-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
         <version>2.2.1</version>
       </plugin>
       <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
         <executions>
           <execution>
+            <id>attach-javadocs</id>
             <goals>
               <goal>jar</goal>
             </goals>
-            <id>attach-javadocs</id>
           </execution>
         </executions>
+        <artifactId>maven-javadoc-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
         <version>3.2.0</version>
       </plugin>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <debug>true</debug>
           <optimize>true</optimize>
+          <debug>true</debug>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
         </configuration>
+        <artifactId>maven-compiler-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
       </plugin>
 
       <plugin>
-        <artifactId>maven-gpg-plugin</artifactId>
         <executions>
           <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
             <goals>
               <goal>sign</goal>
             </goals>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
           </execution>
         </executions>
+        <artifactId>maven-gpg-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
         <version>1.6</version>
       </plugin>
     </plugins>
   </build>
   <description>Extension to add Big Brother Metrics</description>
+  <artifactId>quarkus-monitor-parent</artifactId>
   <developers>
     <developer>
       <email>marcelorubim@gmail.com</email>
@@ -178,6 +178,7 @@
     <module>deployment</module>
     <module>runtime</module>
   </modules>
+
   <name>quarkus-monitor-parent</name>
   <packaging>pom</packaging>
 
@@ -189,35 +190,33 @@
     <maven-enforcer-plugin-version>1.4.1</maven-enforcer-plugin-version>
     <maven-failsafe-plugin-version>2.22.1</maven-failsafe-plugin-version>
     <maven-gpg-plugin-version>1.6</maven-gpg-plugin-version>
+
     <maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
     <maven-jar-plugin-version>3.1.0</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.1.0</maven-javadoc-plugin-version>
-
     <maven-release-plugin-version>2.5.3</maven-release-plugin-version>
     <maven-source-plugin-version>3.0.1</maven-source-plugin-version>
     <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>1.8.2.Final</quarkus.version>
 
     <supported-maven-versions>[3.5.3,)</supported-maven-versions>
+
   </properties>
 
   <scm>
     <connection>scm:git:https://github.com/marcelorubim/quarkus-monitor/</connection>
     <developerConnection>scm:git:https://github.com/marcelorubim/quarkus-monitor/
     </developerConnection>
-    <tag>HEAD</tag>
+    <tag>0.1.0-SNAPSHOT</tag>
     <url>https://github.com/marcelorubim/quarkus-monitor/</url>
   </scm>
   <url>https://github.com/marcelorubim/quarkus-monitor/</url>
-  <version>0.1.0</version>
+  <version>0.1.0-SNAPSHOT</version>
 
 </project>

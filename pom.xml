@@ -218,6 +218,6 @@
     <url>https://github.com/marcelorubim/quarkus-monitor/</url>
   </scm>
   <url>https://github.com/marcelorubim/quarkus-monitor/</url>
-  <version>0.0.10-SNAPSHOT</version>
+  <version>0.1.0</version>
 
 </project>

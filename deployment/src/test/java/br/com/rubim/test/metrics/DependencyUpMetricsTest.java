@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.fake.filters.DependencyMapper;
 import br.com.rubim.test.fake.filters.MetricsFilterForError;
 import br.com.rubim.test.fake.resources.DependencyResource;
 import br.com.rubim.test.fake.resources.DependencyRestClient;
@@ -18,14 +17,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class DependencyUpMetricsTest {
 
-  private static final String SIMPLE_PATH = "/dep/simple";
+  public static final String WRONG_TAG_VALUE = "Metric dependency_up with wrong tag value";
 
   @RegisterExtension
   static QuarkusUnitTest config = new QuarkusUnitTest()
       .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
           .addClasses(DependencyResource.class, MetricsFilterForError.class,
-              DependencyRestClient.class,
-              DependencyMapper.class)
+              DependencyRestClient.class)
           .addAsResource(
               new StringAsset("quarkus.b5.monitor.enable-http-response-size=false\n" +
                   "br.com.rubim.test.fake.resources.DependencyRestClient/mp-rest/url=${test.url}"),
@@ -46,7 +44,7 @@ public class DependencyUpMetricsTest {
         "Metric dependency_up with wrong tag name");
 
     assertEquals(DependencyRestClient.class.getName(),
-        samples.get(0).labelValues.get(0), "Metric dependency_up with wrong tag value");
+        samples.get(0).labelValues.get(0), WRONG_TAG_VALUE);
   }
 
   @Test
@@ -55,7 +53,7 @@ public class DependencyUpMetricsTest {
     var samples = Metrics.dependencyUp.collect().get(0).samples;
 
     assertEquals(DependencyRestClient.class.getName(),
-        samples.get(0).labelValues.get(0), "Metric dependency_up with wrong tag value");
+        samples.get(0).labelValues.get(0), WRONG_TAG_VALUE);
 
     assertEquals(1d, samples.get(0).value, "Metric dependency_up is down with status code 200");
 
@@ -77,7 +75,7 @@ public class DependencyUpMetricsTest {
       var samples = Metrics.dependencyUp.collect().get(0).samples;
 
       assertEquals(DependencyRestClient.class.getName(),
-          samples.get(0).labelValues.get(0), "Metric dependency_up with wrong tag value");
+          samples.get(0).labelValues.get(0), WRONG_TAG_VALUE);
 
       assertEquals(0d, samples.get(0).value, "Metric dependency_up is up with status code 500");
     }

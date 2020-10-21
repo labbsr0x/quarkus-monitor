@@ -13,36 +13,33 @@ import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
 import io.quarkus.vertx.http.deployment.FilterBuildItem;
 
 class QuarkusMonitor {
-    private static final String FEATURE = "monitor";
 
-    @BuildStep
-    AdditionalBeanBuildItem registerAdditionalBeans() {
-        return new AdditionalBeanBuildItem.Builder()
-            .setUnremovable()
-            .addBeanClass(StartMetrics.class)
-            .build();
-    }
+  @BuildStep
+  AdditionalBeanBuildItem registerAdditionalBeans() {
+    return new AdditionalBeanBuildItem.Builder()
+        .setUnremovable()
+        .addBeanClass(StartMetrics.class)
+        .build();
+  }
 
-    @BuildStep
-    void createRoute(
-            BuildProducer<FilterBuildItem> filterProducer) {
-        filterProducer.produce(new FilterBuildItem(new MetricsExporter(),400));
-    }
+  @BuildStep
+  void createRoute(
+      BuildProducer<FilterBuildItem> filterProducer) {
+    filterProducer.produce(new FilterBuildItem(new MetricsExporter(), 400));
+  }
 
-    @BuildStep
-    void addProviders(BuildProducer<ResteasyJaxrsProviderBuildItem> providers,
-            MetricsB5Configuration configuration) {
-      if (configuration.enable) {
-        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceFilter.class.getName()));
-        providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
-
-      }
-
-      if (configuration.enable && configuration.enableHttpResponseSize) {
-        providers
-            .produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceInterceptor.class.getName()));
-      }
+  @BuildStep
+  void addProviders(BuildProducer<ResteasyJaxrsProviderBuildItem> providers,
+      MetricsB5Configuration configuration) {
+    if (configuration.enable) {
+      providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceFilter.class.getName()));
+      providers.produce(new ResteasyJaxrsProviderBuildItem(MetricsClientFilter.class.getName()));
 
     }
 
+    if (configuration.enable && configuration.enableHttpResponseSize) {
+      providers
+          .produce(new ResteasyJaxrsProviderBuildItem(MetricsServiceInterceptor.class.getName()));
+    }
+  }
 }

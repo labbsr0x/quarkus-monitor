@@ -5,18 +5,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.test.fake.filters.DependencyMapper;
 import br.com.rubim.test.fake.filters.MetricsFilterForError;
 import br.com.rubim.test.fake.resources.DependencyResource;
 import br.com.rubim.test.fake.resources.DependencyRestClient;
 import io.quarkus.test.QuarkusUnitTest;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ws.rs.WebApplicationException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -28,8 +29,7 @@ public class DependencyRequestSecondsMetricsTest {
   static QuarkusUnitTest config = new QuarkusUnitTest()
       .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
           .addClasses(DependencyResource.class, MetricsFilterForError.class,
-              DependencyRestClient.class,
-              DependencyMapper.class)
+              DependencyRestClient.class)
           .addAsResource(
               new StringAsset("quarkus.b5.monitor.enable-http-response-size=false\n" +
                   "br.com.rubim.test.fake.resources.DependencyRestClient/mp-rest/url=${test.url}"),
@@ -38,18 +38,27 @@ public class DependencyRequestSecondsMetricsTest {
   @RestClient
   DependencyRestClient restClient;
 
+  @ConfigProperty(name = "quarkus.b5.monitor.error-message")
+  String errorKey;
+
   @ConfigProperty(name = "quarkus.b5.monitor.buckets")
   List<String> buckets;
+
+
+  @BeforeEach
+  void cleanMetrics() {
+    Metrics.dependencyRequestSeconds.clear();
+  }
 
   @Test
   void testStructOfDependencyUpMetric() {
     var tagValues = new String[]{DependencyRestClient.class.getName(),
-        "http", "200", "GET", SIMPLE_PATH, "false", "", buckets.get(0)};
+        "http", "200", "GET", SIMPLE_PATH + "/{status}", "false", "", buckets.get(0)};
 
     var tagNames = new String[]{"name",
         "type", "status", "method", "addr", "isError", "errorMessage", "le"};
 
-    restClient.simple();
+    restClient.simple(200);
 
     var samples = Metrics.dependencyRequestSeconds.collect().get(0).samples;
 
@@ -91,7 +100,7 @@ public class DependencyRequestSecondsMetricsTest {
     assertTrue(sampleSum.get(0).value > 0d,
         "Metric dependency_request_seconds_sum with wrong value");
 
-    restClient.simple();
+    restClient.simple(200);
     samples = Metrics.dependencyRequestSeconds.collect().get(0).samples;
 
     sampleCount = samples.stream()
@@ -103,5 +112,37 @@ public class DependencyRequestSecondsMetricsTest {
     sampleCount.
         ifPresent(s -> assertEquals(2d, s.value,
             "Metric dependency_request_seconds_count with wrong value"));
+  }
+
+  @Test
+  void testCreatingRequestMetricsWithTagErrorInHeader() {
+    var msgError = "error message example";
+    try {
+      restClient.simpleHeader(400, msgError);
+    } catch (WebApplicationException e) {
+      assertEquals(msgError, e.getResponse().getHeaderString(errorKey));
+    }
+
+    var sample = Metrics.dependencyRequestSeconds.collect().get(0).samples.get(0);
+
+    assertEquals("true", sample.labelValues.get(5), "Receive wrong value for Tag isError");
+    assertEquals(msgError, sample.labelValues.get(6),
+        "Receive wrong value for Tag error message");
+  }
+
+  @Test
+  void testCreatingRequestMetricsWithTagErrorInContainer() {
+    var msgError = "error with describe in container";
+    try {
+      restClient.simpleContainer(400, msgError);
+    } catch (WebApplicationException e) {
+      assertEquals(400, e.getResponse().getStatus());
+    }
+
+    var sample = Metrics.dependencyRequestSeconds.collect().get(0).samples.get(0);
+
+    assertEquals("true", sample.labelValues.get(5), "Receive wrong value for Tag isError");
+    assertEquals(msgError, sample.labelValues.get(6),
+        "Receive wrong value for Tag error message");
   }
 }

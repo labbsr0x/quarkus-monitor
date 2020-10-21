@@ -2,6 +2,7 @@ package br.com.rubim.runtime.util;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -38,12 +39,26 @@ public class TagsUtil {
       ClientResponseContext response) {
     Method method = (Method) request
         .getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
+
+    String pathWithParam = "";
+    if (method.getDeclaringClass().getAnnotation(Path.class) != null) {
+      pathWithParam = method.getDeclaringClass().getAnnotation(Path.class).value();
+    }
+
+    if (method.getAnnotation(Path.class) != null) {
+      pathWithParam = pathWithParam + method.getAnnotation(Path.class).value();
+    }
+
+    if (pathWithParam.isEmpty()) {
+      pathWithParam = request.getUri().getPath();
+    }
+
     return new String[]{
         method.getDeclaringClass().getCanonicalName(),
         HTTP,
         Integer.toString(response.getStatus()),
         request.getMethod(),
-        request.getUri().getPath(),
+        pathWithParam,
         Boolean.toString(isError(response.getStatus())),
         extractMessageError(request, response)
     };

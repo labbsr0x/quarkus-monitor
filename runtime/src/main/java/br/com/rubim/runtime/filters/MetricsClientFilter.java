@@ -1,5 +1,6 @@
 package br.com.rubim.runtime.filters;
 
+import br.com.rubim.runtime.MonitorMetrics;
 import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.runtime.util.TagsUtil;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
             Metrics.dependencyRequestSeconds.labels(labels)
-                .observe(Metrics.calcTimeElapsedInSeconds(init));
+                .observe(MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
         }
     }
 }

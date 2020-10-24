@@ -1,5 +1,6 @@
 package br.com.rubim.runtime.filters;
 
+import br.com.rubim.runtime.MonitorMetrics;
 import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
@@ -49,7 +50,8 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
         Instant init = (Instant) containerRequestContext
             .getProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS);
 
-        Metrics.requestSeconds.labels(labels).observe(Metrics.calcTimeElapsedInSeconds(init));
+        Metrics.requestSeconds.labels(labels)
+            .observe(MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
       }
     }
   }

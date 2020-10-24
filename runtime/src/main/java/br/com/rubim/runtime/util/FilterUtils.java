@@ -64,7 +64,7 @@ public class FilterUtils {
     ResourceMethodInvoker resourceMethodInvoker;
     Method method = null;
 
-    if (request.getProperty(RESOURCE_METHOD_INVOKER) instanceof Method) {
+    if (request.getProperty(RESOURCE_METHOD_INVOKER) instanceof ResourceMethodInvoker) {
       resourceMethodInvoker = (ResourceMethodInvoker) request.getProperty(RESOURCE_METHOD_INVOKER);
       method = resourceMethodInvoker.getMethod();
     }

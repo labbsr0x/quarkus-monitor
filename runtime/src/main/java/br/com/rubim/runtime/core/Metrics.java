@@ -3,6 +3,10 @@ package br.com.rubim.runtime.core;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.Histogram;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -13,6 +17,7 @@ public class Metrics {
   public static final Counter responseSizeBytes;
   public static final Gauge dependencyUp;
   public static final Counter applicationInfo;
+  private static final BigDecimal MULTIPLIER_NANO_TO_SECONDS = new BigDecimal(1.0E9D);
 
   private static final String TYPE = "type";
   private static final String STATUS = "status";
@@ -60,6 +65,12 @@ public class Metrics {
         .labelNames(NAME, TYPE, STATUS, METHOD, ADDR, IS_ERROR, ERROR_MESSAGE)
         .buckets(bucketsValues)
         .register();
+  }
+
+  public static double calcTimeElapsedInSeconds(Instant init) {
+    var finish = Instant.now();
+    BigDecimal diff = new BigDecimal(Duration.between(init, finish).toNanos());
+    return diff.divide(MULTIPLIER_NANO_TO_SECONDS, 9, RoundingMode.HALF_UP).doubleValue();
   }
 
   private Metrics() {

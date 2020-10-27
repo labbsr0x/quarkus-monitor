@@ -1,17 +1,23 @@
 package br.com.rubim.test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import br.com.rubim.runtime.MonitorMetrics;
 import br.com.rubim.runtime.core.Metrics;
+import br.com.rubim.runtime.dependency.DependencyState;
 import br.com.rubim.test.fake.filters.MetricsFilterForError;
 import br.com.rubim.test.fake.resources.DependencyResource;
 import br.com.rubim.test.fake.resources.DependencyRestClient;
 import io.quarkus.test.QuarkusUnitTest;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -31,6 +37,11 @@ public class DependencyUpMetricsTest {
 
   @RestClient
   DependencyRestClient restClient;
+
+  @BeforeEach
+  void cleanMetrics() {
+    Metrics.dependencyUp.clear();
+  }
 
   @Test
   void testStructOfDependencyUpMetric() {
@@ -80,4 +91,41 @@ public class DependencyUpMetricsTest {
       assertEquals(0d, samples.get(0).value, "Metric dependency_up is up with status code 500");
     }
   }
+
+  @Test
+  void testDependencyUpMetricRemovedByMonitorMetrics() {
+    dependencyUpMetricCreateByMonitorMetrics("myChecker", DependencyState.UP);
+    MonitorMetrics.INSTANCE.cancelDependencyChecker("myChecker");
+
+    assertEquals(0, MonitorMetrics.INSTANCE.listOfCheckersScheduled().size(),
+        "cancelDependencyChecker does not remove the checker ");
+  }
+
+  @Test
+  void testDependencyDownMetricCreateByMonitorMetrics() {
+    dependencyUpMetricCreateByMonitorMetrics("myChecker", DependencyState.UP);
+  }
+
+  @Test
+  void testDependencyUpMetricCreateByMonitorMetrics() {
+    dependencyUpMetricCreateByMonitorMetrics("myChecker", DependencyState.DOWN);
+  }
+
+  private void dependencyUpMetricCreateByMonitorMetrics(String checker, DependencyState state) {
+    MonitorMetrics.INSTANCE.addDependencyChecker(checker, () -> state,
+        100, TimeUnit.MILLISECONDS);
+
+    assertTimeout(Duration.ofMillis(200), () -> {
+      while (Metrics.dependencyUp.collect().get(0).samples.size() <= 0) {
+      }
+    }, "Timeout to execute a dependency checker");
+
+    var samples = Metrics.dependencyUp.collect().get(0).samples;
+
+    assertEquals("myChecker", samples.get(0).labelValues.get(0), WRONG_TAG_VALUE);
+
+    assertEquals(state.getValue(), samples.get(0).value, "Metric dependency_up is "
+        + (samples.get(0).value == 1d ? "up" : "down"));
+  }
+
 }

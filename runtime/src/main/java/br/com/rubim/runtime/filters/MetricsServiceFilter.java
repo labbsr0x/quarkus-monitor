@@ -1,5 +1,6 @@
 package br.com.rubim.runtime.filters;
 
+import br.com.rubim.runtime.MonitorMetrics;
 import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.runtime.util.FilterUtils;
 import br.com.rubim.runtime.util.TagsUtil;
@@ -21,7 +22,7 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
 
   @Override
   public void filter(ContainerRequestContext request) throws IOException {
-    var pathWithId = FilterUtils.replacePathParamValueForPathParamId(request.getUriInfo());
+    var pathWithId = FilterUtils.toPathWithParamId(request);
     var isValid = FilterUtils.validPath(pathWithId);
 
     request.setProperty(FilterUtils.VALID_PATH_FOR_METRICS, isValid);
@@ -49,7 +50,8 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
         Instant init = (Instant) containerRequestContext
             .getProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS);
 
-        Metrics.requestSeconds.labels(labels).observe(FilterUtils.calcTimeElapsedInSeconds(init));
+        Metrics.requestSeconds.labels(labels)
+            .observe(MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
       }
     }
   }

@@ -49,10 +49,10 @@ public class MonitorMetrics {
 
     executor.scheduleWithFixedDelay(() -> {
       if (DependencyState.UP.equals(task.get())) {
-        System.out.println("Checker: {} was UP" + name);
+        LOG.debug("Checker: {} was UP", name);
         Metrics.dependencyUp.labels(name).set(1);
       } else {
-        System.out.println("Checker: {} was DOWN" + name);
+        LOG.debug("Checker: {} was DOWN", name);
         Metrics.dependencyUp.labels(name).set(0);
       }
     }, time, time, unit);

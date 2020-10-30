@@ -47,16 +47,16 @@
       <artifactId>quarkus-jsonp-deployment</artifactId>
       <version>${quarkus.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-metrics-deployment</artifactId>
-      <version>${quarkus.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-metrics-spi</artifactId>
-      <version>${quarkus.version}</version>
-    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>io.quarkus</groupId>-->
+    <!--      <artifactId>quarkus-smallrye-metrics-deployment</artifactId>-->
+    <!--      <version>${quarkus.version}</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>io.quarkus</groupId>-->
+    <!--      <artifactId>quarkus-smallrye-metrics-spi</artifactId>-->
+    <!--      <version>${quarkus.version}</version>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-core-deployment</artifactId>

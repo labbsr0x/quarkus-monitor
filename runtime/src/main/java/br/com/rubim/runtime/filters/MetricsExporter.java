@@ -5,19 +5,17 @@ import io.prometheus.client.exporter.common.TextFormat;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
-import org.eclipse.microprofile.config.ConfigProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Objects;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 public class MetricsExporter implements Handler<RoutingContext> {
-    private static final Logger LOG = LoggerFactory.getLogger(MetricsExporter.class);
 
     private String metricsPath = ConfigProvider.getConfig().getOptionalValue("quarkus.smallrye-metrics.path", String.class)
-            .orElse("/metrics");
+        .orElse(ConfigProvider.getConfig()
+            .getOptionalValue("quarkus.micrometer.export.prometheus.path", String.class)
+            .orElse("/metrics"));
 
     public String getMetricsDefaultRegistry() {
         try (StringWriter writer = new StringWriter()) {
@@ -37,6 +35,7 @@ public class MetricsExporter implements Handler<RoutingContext> {
             response.setChunked(true);
             response.write(getMetricsDefaultRegistry());
         }
-        rc.next();
+
+      rc.next();
     }
 }

@@ -26,11 +26,11 @@
             <artifactId>quarkus-rest-client</artifactId>
             <version>${quarkus.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-metrics</artifactId>
-            <version>${quarkus.version}</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.quarkus</groupId>-->
+        <!--            <artifactId>quarkus-smallrye-metrics</artifactId>-->
+        <!--            <version>${quarkus.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient</artifactId>

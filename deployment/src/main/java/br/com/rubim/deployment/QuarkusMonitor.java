@@ -25,7 +25,7 @@ class QuarkusMonitor {
   @BuildStep
   void createRoute(
       BuildProducer<FilterBuildItem> filterProducer) {
-    filterProducer.produce(new FilterBuildItem(new MetricsExporter(), 400));
+    filterProducer.produce(new FilterBuildItem(new MetricsExporter(), Integer.MAX_VALUE));
   }
 
   @BuildStep

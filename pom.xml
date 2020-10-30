@@ -203,7 +203,7 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.version>1.8.2.Final</quarkus.version>
+    <quarkus.version>1.8.3.Final</quarkus.version>
 
     <supported-maven-versions>[3.5.3,)</supported-maven-versions>
 

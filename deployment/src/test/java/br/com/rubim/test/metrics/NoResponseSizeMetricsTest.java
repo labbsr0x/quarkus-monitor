@@ -1,11 +1,11 @@
 package br.com.rubim.test.metrics;
 
 import static io.restassured.RestAssured.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.test.fake.filters.MetricsFilterForError;
 import br.com.rubim.test.fake.resources.RequestResource;
+import io.micrometer.core.instrument.Metrics;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -30,8 +30,9 @@ public class NoResponseSizeMetricsTest {
   @Test
   void testNotCreatingResponseSizeBytesMetrics() {
     when().get(SIMPLE_PATH).then().statusCode(200);
-    var samples = Metrics.responseSizeBytes.collect().get(0).samples;
 
-    assertEquals(0d, samples.size(), "Metric response_size_bytes created besides disable");
+    assertNull(
+        Metrics.globalRegistry.find("response_size_bytes").counter(),
+        "Metric response_size_bytes created besides disable");
   }
 }

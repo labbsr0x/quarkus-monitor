@@ -1,9 +1,10 @@
 package br.com.rubim.test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.test.fake.resources.RequestResource;
+import io.micrometer.core.instrument.Metrics;
 import io.quarkus.test.QuarkusUnitTest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,8 +29,12 @@ class ApplicationInfoMetricsTest {
 
   @Test
   void testCreatingApplicationInfoMetrics() {
-    var samples = Metrics.applicationInfo.collect().get(0).samples;
-    assertEquals(1d, samples.get(0).value, "Metric with wrong value");
-    assertEquals(version, samples.get(0).labelValues.get(0), "Metric with wrong label value");
+    assertNotNull(Metrics.globalRegistry.find("application_info").counter(),
+        "Metric application info not found");
+    assertEquals(1d, Metrics.globalRegistry.get("application_info").counter().count(),
+        "Metric with wrong value");
+    assertEquals(version,
+        Metrics.globalRegistry.get("application_info").counter().getId().getTag("version"),
+        "Metric with wrong label value");
   }
 }

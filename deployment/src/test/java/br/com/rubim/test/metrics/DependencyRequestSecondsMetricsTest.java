@@ -5,14 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import br.com.rubim.runtime.MonitorMetrics;
-import br.com.rubim.runtime.core.Metrics;
 import br.com.rubim.runtime.dependency.DependencyEvent;
 import br.com.rubim.test.fake.filters.MetricsFilterForError;
 import br.com.rubim.test.fake.resources.DependencyResource;
 import br.com.rubim.test.fake.resources.DependencyRestClient;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.Tag;
 import io.quarkus.test.QuarkusUnitTest;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ws.rs.WebApplicationException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class DependencyRequestSecondsMetricsTest {
 
   private static final String SIMPLE_PATH = "/dep/simple";
+  private static final String NAME = "dependency_request_seconds";
 
   @RegisterExtension
   static QuarkusUnitTest config = new QuarkusUnitTest()
@@ -46,74 +49,41 @@ public class DependencyRequestSecondsMetricsTest {
   @ConfigProperty(name = "quarkus.b5.monitor.buckets")
   List<String> buckets;
 
-
   @BeforeEach
   void cleanMetrics() {
-    Metrics.dependencyRequestSeconds.clear();
+    Metrics.globalRegistry.clear();
   }
 
   @Test
   void testStructOfDependencyRequestMetric() {
-    var tagValues = new String[]{DependencyRestClient.class.getName(),
-        "http", "200", "GET", SIMPLE_PATH + "/{status}", "false", "", buckets.get(0)};
-
-    var tagNames = new String[]{"name",
-        "type", "status", "method", "addr", "isError", "errorMessage", "le"};
-
-    restClient.simple(200);
-
-    var samples = Metrics.dependencyRequestSeconds.collect().get(0).samples;
-
-    assertEquals(samples.size(),
-        buckets.size() + 3, "Metric dependency_request_seconds with wrong number of samples");
-
-    var sampleBucket = samples.stream()
-        .filter(sample -> "dependency_request_seconds_bucket".equals(sample.name)).findFirst();
-
-    assertTrue(sampleBucket.isPresent(),
-        "Metric dependency_request_seconds with wrong number of samples");
-
-    sampleBucket.ifPresent(s -> {
-      assertArrayEquals(tagValues, s.labelValues.toArray(), "Tags with wrong values");
-      assertArrayEquals(tagNames, s.labelNames.toArray(), "Tags with wrong names");
-    });
-
-    var bucketSamples = samples.stream()
-        .filter(sample -> "dependency_request_seconds_bucket".equals(sample.name)).collect(
-            Collectors.toList());
-
-    assertEquals(buckets.size() + 1, bucketSamples.size(),
-        "Metric dependency_request_seconds with wrong number of samples");
-
-    var sampleCount = samples.stream()
-        .filter(sample -> "dependency_request_seconds_count".equals(sample.name)).findFirst();
-
-    assertTrue(sampleCount.isPresent(),
-        "Metric sample for dependency_request_seconds_count not found.");
-    sampleCount.ifPresent(
-        s -> assertEquals(1, s.value, "Metric dependency_request_seconds_count with wrong value"));
-
-    var sampleSum = samples.stream()
-        .filter(sample -> "dependency_request_seconds_sum".equals(sample.name))
-        .collect(Collectors.toList());
-
-    assertEquals(1d, sampleSum.size(),
-        "Metric sample for dependency_request_seconds_sum not found.");
-    assertTrue(sampleSum.get(0).value > 0d,
-        "Metric dependency_request_seconds_sum with wrong value");
+    var tagValues = new String[]{SIMPLE_PATH + "/{status}", "", "false", "GET",
+        DependencyRestClient.class.getName(), "200", "http"};
+    var tagKeys = new String[]{"addr", "errorMessage", "isError", "method", "name", "status",
+        "type"};
 
     restClient.simple(200);
-    samples = Metrics.dependencyRequestSeconds.collect().get(0).samples;
 
-    sampleCount = samples.stream()
-        .filter(sample -> "dependency_request_seconds_count".equals(sample.name)).findFirst();
+    var samples = Metrics.globalRegistry.find(NAME).summaries();
 
-    assertTrue(sampleCount.isPresent(),
-        "Metric sample for dependency_request_seconds_count not found.");
+    assertEquals(1, samples.size(),
+        "Metric with wrong number of samples");
 
-    sampleCount.
-        ifPresent(s -> assertEquals(2d, s.value,
-            "Metric dependency_request_seconds_count with wrong value"));
+    var sample = samples.toArray(new DistributionSummary[0])[0];
+    assertEquals(buckets.size(), sample.takeSnapshot().histogramCounts().length,
+        "Metric with wrong number of buckets");
+
+    var actualTagValues = sample.getId().getTags().stream().map(Tag::getValue)
+        .toArray(String[]::new);
+    var actualTagKeys = sample.getId().getTags().stream().map(Tag::getKey).toArray(String[]::new);
+
+    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
+    assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
+
+    assertTrue(sample.totalAmount() > 0, "Metric " + NAME + "_sum with wrong value");
+    assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
+
+    restClient.simple(200);
+    assertEquals(2, sample.count(), "Metric " + NAME + "_count with wrong value");
   }
 
   @Test
@@ -125,11 +95,7 @@ public class DependencyRequestSecondsMetricsTest {
       assertEquals(msgError, e.getResponse().getHeaderString(errorKey));
     }
 
-    var sample = Metrics.dependencyRequestSeconds.collect().get(0).samples.get(0);
-
-    assertEquals("true", sample.labelValues.get(5), "Receive wrong value for Tag isError");
-    assertEquals(msgError, sample.labelValues.get(6),
-        "Receive wrong value for Tag error message");
+    createRequestMetricsWithError(msgError);
   }
 
   @Test
@@ -141,23 +107,26 @@ public class DependencyRequestSecondsMetricsTest {
       assertEquals(400, e.getResponse().getStatus());
     }
 
-    var sample = Metrics.dependencyRequestSeconds.collect().get(0).samples.get(0);
+    createRequestMetricsWithError(msgError);
+  }
 
-    assertEquals("true", sample.labelValues.get(5), "Receive wrong value for Tag isError");
-    assertEquals(msgError, sample.labelValues.get(6),
+  private void createRequestMetricsWithError(String msgError) {
+    var sample = Metrics.globalRegistry.find(NAME).meters().toArray(new Meter[0])[0];
+
+    assertEquals("true", sample.getId().getTag("isError"),
+        "Receive wrong value for Tag isError");
+    assertEquals(msgError, sample.getId().getTag("errorMessage"),
         "Receive wrong value for Tag error message");
   }
 
-
   @Test
   void testCreatingOfDependencyRequestMetricByMonitorMetrics() {
-    var tagValues = new String[]{"myDependency", "other", "OK", "GET", "myAddress", "true",
-        "my error message", buckets.get(0)};
-    var tagNames = new String[]{"name", "type", "status", "method", "addr", "isError",
-        "errorMessage",
-        "le"};
+    var tagValues = new String[]{"myAddress", "my error message", "true", "GET", "myChecker", "OK",
+        "other"};
+    var tagKeys = new String[]{"addr", "errorMessage", "isError", "method", "name", "status",
+        "type"};
 
-    DependencyEvent dependencyEvent = new DependencyEvent("myDependency")
+    DependencyEvent dependencyEvent = new DependencyEvent("myChecker")
         .setType("other")
         .setStatus("OK")
         .setMethod("GET")
@@ -167,45 +136,23 @@ public class DependencyRequestSecondsMetricsTest {
 
     MonitorMetrics.INSTANCE.addDependencyEvent(dependencyEvent, 1d);
 
-    var samples = Metrics.dependencyRequestSeconds.collect().get(0).samples;
+    var samples = Metrics.globalRegistry.find(NAME).summaries();
 
-    assertEquals(samples.size(),
-        buckets.size() + 3, "Metric dependency_request_seconds with wrong number of samples");
+    assertEquals(1, samples.size(),
+        "Metric with wrong number of samples");
 
-    var sampleBucket = samples.stream()
-        .filter(sample -> "dependency_request_seconds_bucket".equals(sample.name)).findFirst();
+    var sample = samples.toArray(new DistributionSummary[0])[0];
+    assertEquals(buckets.size(), sample.takeSnapshot().histogramCounts().length,
+        "Metric with wrong number of buckets");
 
-    assertTrue(sampleBucket.isPresent(),
-        "Metric dependency_request_seconds with wrong number of samples");
+    var actualTagValues = sample.getId().getTags().stream().map(Tag::getValue)
+        .toArray(String[]::new);
+    var actualTagKeys = sample.getId().getTags().stream().map(Tag::getKey).toArray(String[]::new);
 
-    sampleBucket.ifPresent(s -> {
-      assertArrayEquals(tagValues, s.labelValues.toArray(), "Tags with wrong values");
-      assertArrayEquals(tagNames, s.labelNames.toArray(), "Tags with wrong names");
-    });
+    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
+    assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
 
-    var bucketSamples = samples.stream()
-        .filter(sample -> "dependency_request_seconds_bucket".equals(sample.name)).collect(
-            Collectors.toList());
-
-    assertEquals(buckets.size() + 1, bucketSamples.size(),
-        "Metric dependency_request_seconds with wrong number of samples");
-
-    var sampleCount = samples.stream()
-        .filter(sample -> "dependency_request_seconds_count".equals(sample.name)).findFirst();
-
-    assertTrue(sampleCount.isPresent(),
-        "Metric sample for dependency_request_seconds_count not found.");
-    sampleCount.ifPresent(
-        s -> assertEquals(1, s.value, "Metric dependency_request_seconds_count with wrong value"));
-
-    var sampleSum = samples.stream()
-        .filter(sample -> "dependency_request_seconds_sum".equals(sample.name))
-        .collect(Collectors.toList());
-
-    assertEquals(1d, sampleSum.size(),
-        "Metric sample for dependency_request_seconds_sum not found.");
-    assertTrue(sampleSum.get(0).value > 0d,
-        "Metric dependency_request_seconds_sum with wrong value");
+    assertTrue(sample.totalAmount() > 0, "Metric " + NAME + "_sum with wrong value");
+    assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
   }
-
 }

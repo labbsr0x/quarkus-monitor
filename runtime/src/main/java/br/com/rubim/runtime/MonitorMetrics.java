@@ -50,10 +50,10 @@ public class MonitorMetrics {
     executor.scheduleWithFixedDelay(() -> {
       if (DependencyState.UP.equals(task.get())) {
         LOG.debug("Checker: {} is UP", name);
-        Metrics.dependencyUp.labels(name).set(1);
+        Metrics.dependencyUp(name);
       } else {
         LOG.debug("Checker: {} is DOWN", name);
-        Metrics.dependencyUp.labels(name).set(0);
+        Metrics.dependencyDown(name);
       }
     }, time, time, unit);
 
@@ -107,8 +107,7 @@ public class MonitorMetrics {
         event.getIsError(),
         event.getErrorMessage()};
 
-    Metrics.dependencyRequestSeconds.labels(labels)
-        .observe(elapsedSeconds);
+    Metrics.dependencyRequestSeconds(labels, elapsedSeconds);
   }
 
   /**
@@ -135,8 +134,7 @@ public class MonitorMetrics {
         event.getIsError(),
         event.getErrorMessage()};
 
-    Metrics.requestSeconds.labels(labels)
-        .observe(elapsedSeconds);
+    Metrics.requestSeconds(labels, elapsedSeconds);
   }
 
   /**

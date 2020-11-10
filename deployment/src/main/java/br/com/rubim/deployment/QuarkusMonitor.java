@@ -3,14 +3,12 @@ package br.com.rubim.deployment;
 import br.com.rubim.runtime.config.MetricsB5Configuration;
 import br.com.rubim.runtime.core.StartMetrics;
 import br.com.rubim.runtime.filters.MetricsClientFilter;
-import br.com.rubim.runtime.filters.MetricsExporter;
 import br.com.rubim.runtime.filters.MetricsServiceFilter;
 import br.com.rubim.runtime.filters.MetricsServiceInterceptor;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
-import io.quarkus.vertx.http.deployment.FilterBuildItem;
 
 class QuarkusMonitor {
 
@@ -20,12 +18,6 @@ class QuarkusMonitor {
         .setUnremovable()
         .addBeanClass(StartMetrics.class)
         .build();
-  }
-
-  @BuildStep
-  void createRoute(
-      BuildProducer<FilterBuildItem> filterProducer) {
-    filterProducer.produce(new FilterBuildItem(new MetricsExporter(), Integer.MAX_VALUE));
   }
 
   @BuildStep

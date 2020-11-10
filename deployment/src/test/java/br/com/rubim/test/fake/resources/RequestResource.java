@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 @Path("/request")
 public class RequestResource {
 
-
   @GET
   @Path("/simple")
   @Produces(MediaType.TEXT_PLAIN)

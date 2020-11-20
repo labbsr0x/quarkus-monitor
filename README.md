@@ -85,7 +85,6 @@ If you needed to create your own dependency_up metric, you can use the addDepend
 ###### Dependency_request
 You can create your own dependency_request metric using addDependencyEvent method in MonitorMetrics to add a new dependency request event.
 
-
 #### How to Use
 
 Import the following dependency to your project:

@@ -50,8 +50,7 @@ public class MetricsServiceFilter implements ContainerRequestFilter, ContainerRe
         Instant init = (Instant) containerRequestContext
             .getProperty(FilterUtils.TIMER_INIT_TIME_MILLISECONDS);
 
-        Metrics.requestSeconds.labels(labels)
-            .observe(MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
+        Metrics.requestSeconds(labels, MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
       }
     }
   }

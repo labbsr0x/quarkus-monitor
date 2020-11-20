@@ -9,7 +9,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 public class StartMetrics {
 
   void onStart(@Observes StartupEvent ev) {
-    Metrics.applicationInfo.labels(ConfigProvider.getConfig()
-        .getOptionalValue("quarkus.application.version", String.class).orElse("not-set")).inc();
+    Metrics.applicationInfo(ConfigProvider.getConfig()
+        .getOptionalValue("quarkus.application.version", String.class).orElse("not-set"));
   }
 }

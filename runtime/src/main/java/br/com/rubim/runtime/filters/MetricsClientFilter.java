@@ -31,15 +31,15 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
         Method method = (Method) clientRequestContext.getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
 
         if (clientResponseContext.getStatus() >= 200 && clientResponseContext.getStatus() < 500) {
-            Metrics.dependencyUp.labels(method.getDeclaringClass().getCanonicalName()).set(1);
+            Metrics.dependencyUp(method.getDeclaringClass().getCanonicalName());
         } else if (clientResponseContext.getStatus() >= 500) {
-            Metrics.dependencyUp.labels(method.getDeclaringClass().getCanonicalName()).set(0);
+            Metrics.dependencyDown(method.getDeclaringClass().getCanonicalName());
         }
 
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
-            Metrics.dependencyRequestSeconds.labels(labels)
-                .observe(MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
+            Metrics.dependencyRequestSeconds(labels,
+                MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
         }
     }
 }

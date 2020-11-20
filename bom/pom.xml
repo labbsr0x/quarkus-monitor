@@ -60,6 +60,16 @@
             <groupId>io.quarkus</groupId>
             <version>${quarkus.version}</version>
           </dependency>
+          <dependency>
+            <artifactId>quarkus-micrometer</artifactId>
+            <groupId>io.quarkus</groupId>
+            <version>${quarkus.version}</version>
+          </dependency>
+          <dependency>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <groupId>io.micrometer</groupId>
+            <version>${micrometer-registry-prometheus.version}</version>
+          </dependency>
 
         </dependencies>
 

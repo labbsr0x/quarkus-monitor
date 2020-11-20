@@ -24,7 +24,7 @@ public class MonitorMetrics {
 
   private static final Logger LOG = LoggerFactory.getLogger(MonitorMetrics.class);
   public static MonitorMetrics INSTANCE = new MonitorMetrics();
-  private final BigDecimal MULTIPLIER_NANO_TO_SECONDS = new BigDecimal(1.0E9D);
+  private static final BigDecimal MULTIPLIER_NANO_TO_SECONDS = new BigDecimal(1.0E9D);
   private Map<String, ScheduledExecutorService> schedulesCheckers;
 
   private MonitorMetrics() {
@@ -143,7 +143,7 @@ public class MonitorMetrics {
    * @param init initial time
    * @return time in seconds
    */
-  public double calcTimeElapsedInSeconds(Instant init) {
+  public static double calcTimeElapsedInSeconds(Instant init) {
     var finish = Instant.now();
     BigDecimal diff = new BigDecimal(Duration.between(init, finish).toNanos());
     return diff.divide(MULTIPLIER_NANO_TO_SECONDS, 9, RoundingMode.HALF_UP).doubleValue();

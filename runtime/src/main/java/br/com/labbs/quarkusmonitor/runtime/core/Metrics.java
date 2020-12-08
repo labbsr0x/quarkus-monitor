@@ -1,4 +1,4 @@
-package br.com.rubim.runtime.core;
+package br.com.labbs.quarkusmonitor.runtime.core;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;

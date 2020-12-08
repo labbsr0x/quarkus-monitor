@@ -1,10 +1,10 @@
-package br.com.rubim.test.metrics;
+package br.com.labbs.quarkusmonitor.test.metrics;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 
-import br.com.rubim.test.fake.resources.RequestResource;
+import br.com.labbs.quarkusmonitor.test.fake.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;

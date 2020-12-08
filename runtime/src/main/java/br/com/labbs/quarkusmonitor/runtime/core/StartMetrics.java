@@ -1,4 +1,4 @@
-package br.com.rubim.runtime.core;
+package br.com.labbs.quarkusmonitor.runtime.core;
 
 import io.quarkus.runtime.StartupEvent;
 import javax.enterprise.context.ApplicationScoped;

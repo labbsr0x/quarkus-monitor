@@ -1,4 +1,4 @@
-package br.com.rubim.runtime.dependency;
+package br.com.labbs.quarkusmonitor.runtime.dependency;
 
 /**
  * Defines the state a dependency can have.

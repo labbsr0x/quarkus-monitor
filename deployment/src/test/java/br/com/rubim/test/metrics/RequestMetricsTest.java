@@ -1,14 +1,14 @@
-package br.com.rubim.test.metrics;
+package br.com.labbs.quarkusmonitor.test.metrics;
 
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import br.com.rubim.runtime.MonitorMetrics;
-import br.com.rubim.runtime.request.RequestEvent;
-import br.com.rubim.test.fake.filters.MetricsFilterForError;
-import br.com.rubim.test.fake.resources.RequestResource;
+import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
+import br.com.labbs.quarkusmonitor.runtime.request.RequestEvent;
+import br.com.labbs.quarkusmonitor.test.fake.filters.MetricsFilterForError;
+import br.com.labbs.quarkusmonitor.test.fake.resources.RequestResource;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;

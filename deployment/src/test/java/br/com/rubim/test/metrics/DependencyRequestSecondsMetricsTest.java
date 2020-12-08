@@ -1,14 +1,14 @@
-package br.com.rubim.test.metrics;
+package br.com.labbs.quarkusmonitor.test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import br.com.rubim.runtime.MonitorMetrics;
-import br.com.rubim.runtime.dependency.DependencyEvent;
-import br.com.rubim.test.fake.filters.MetricsFilterForError;
-import br.com.rubim.test.fake.resources.DependencyResource;
-import br.com.rubim.test.fake.resources.DependencyRestClient;
+import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
+import br.com.labbs.quarkusmonitor.runtime.dependency.DependencyEvent;
+import br.com.labbs.quarkusmonitor.test.fake.filters.MetricsFilterForError;
+import br.com.labbs.quarkusmonitor.test.fake.resources.DependencyResource;
+import br.com.labbs.quarkusmonitor.test.fake.resources.DependencyRestClient;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Metrics;
@@ -37,7 +37,7 @@ public class DependencyRequestSecondsMetricsTest {
               DependencyRestClient.class)
           .addAsResource(
               new StringAsset("quarkus.b5.monitor.enable-http-response-size=false\n" +
-                  "br.com.rubim.test.fake.resources.DependencyRestClient/mp-rest/url=${test.url}"),
+                  "br.com.labbs.quarkusmonitor.test.fake.resources.DependencyRestClient/mp-rest/url=${test.url}"),
               "application.properties"));
 
   @RestClient

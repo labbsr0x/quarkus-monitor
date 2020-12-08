@@ -1,4 +1,4 @@
-package br.com.rubim.runtime.util;
+package br.com.labbs.quarkusmonitor.runtime.util;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

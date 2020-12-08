@@ -1,10 +1,10 @@
-package br.com.rubim.deployment;
+package br.com.labbs.quarkusmonitor.deployment;
 
-import br.com.rubim.runtime.config.MetricsB5Configuration;
-import br.com.rubim.runtime.core.StartMetrics;
-import br.com.rubim.runtime.filters.MetricsClientFilter;
-import br.com.rubim.runtime.filters.MetricsServiceFilter;
-import br.com.rubim.runtime.filters.MetricsServiceInterceptor;
+import br.com.labbs.quarkusmonitor.runtime.config.MetricsB5Configuration;
+import br.com.labbs.quarkusmonitor.runtime.core.StartMetrics;
+import br.com.labbs.quarkusmonitor.runtime.filters.MetricsClientFilter;
+import br.com.labbs.quarkusmonitor.runtime.filters.MetricsServiceFilter;
+import br.com.labbs.quarkusmonitor.runtime.filters.MetricsServiceInterceptor;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;

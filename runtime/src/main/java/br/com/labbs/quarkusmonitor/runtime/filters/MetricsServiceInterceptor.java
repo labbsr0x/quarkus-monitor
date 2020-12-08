@@ -1,8 +1,8 @@
-package br.com.rubim.runtime.filters;
+package br.com.labbs.quarkusmonitor.runtime.filters;
 
-import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.runtime.util.FilterUtils;
-import br.com.rubim.runtime.util.TagsUtil;
+import br.com.labbs.quarkusmonitor.runtime.core.Metrics;
+import br.com.labbs.quarkusmonitor.runtime.util.FilterUtils;
+import br.com.labbs.quarkusmonitor.runtime.util.TagsUtil;
 import java.io.IOException;
 import java.util.Optional;
 import javax.annotation.Priority;

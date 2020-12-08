@@ -1,7 +1,8 @@
-package br.com.rubim.runtime.request;
+package br.com.labbs.quarkusmonitor.runtime.dependency;
 
-public class RequestEvent {
+public class DependencyEvent {
 
+  private String name;
   private String type;
   private String status;
   private String method;
@@ -9,7 +10,8 @@ public class RequestEvent {
   private String isError;
   private String errorMessage;
 
-  public RequestEvent() {
+  public DependencyEvent(String name) {
+    this.name = name;
     this.type = "";
     this.status = "";
     this.method = "";
@@ -18,11 +20,15 @@ public class RequestEvent {
     this.errorMessage = "";
   }
 
+  public String getName() {
+    return name;
+  }
+
   public String getType() {
     return type;
   }
 
-  public RequestEvent setType(String type) {
+  public DependencyEvent setType(String type) {
     this.type = type;
     return this;
   }
@@ -31,7 +37,7 @@ public class RequestEvent {
     return status;
   }
 
-  public RequestEvent setStatus(String status) {
+  public DependencyEvent setStatus(String status) {
     this.status = status;
     return this;
   }
@@ -40,7 +46,7 @@ public class RequestEvent {
     return method;
   }
 
-  public RequestEvent setMethod(String method) {
+  public DependencyEvent setMethod(String method) {
     this.method = method;
     return this;
   }
@@ -49,7 +55,7 @@ public class RequestEvent {
     return address;
   }
 
-  public RequestEvent setAddress(String address) {
+  public DependencyEvent setAddress(String address) {
     this.address = address;
     return this;
   }
@@ -58,7 +64,7 @@ public class RequestEvent {
     return isError;
   }
 
-  public RequestEvent setIsError(boolean isError) {
+  public DependencyEvent setIsError(boolean isError) {
     this.isError = Boolean.toString(isError);
     return this;
   }
@@ -67,7 +73,7 @@ public class RequestEvent {
     return errorMessage;
   }
 
-  public RequestEvent setErrorMessage(String errorMessage) {
+  public DependencyEvent setErrorMessage(String errorMessage) {
     this.errorMessage = errorMessage;
     return this;
   }

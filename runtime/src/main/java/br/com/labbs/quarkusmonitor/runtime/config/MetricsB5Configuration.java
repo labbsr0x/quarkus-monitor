@@ -1,4 +1,4 @@
-package br.com.rubim.runtime.config;
+package br.com.labbs.quarkusmonitor.runtime.config;
 
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;

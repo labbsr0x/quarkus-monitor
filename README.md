@@ -93,7 +93,7 @@ Import the following dependency to your project:
 
 ```xml
 <dependency>
-  <groupId>io.github.marcelorubim</groupId>
+  <groupId>br.com.labbs</groupId>
   <artifactId>quarkus-monitor</artifactId>
   <version>0.1.4</version>
 </dependency>

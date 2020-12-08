@@ -1,4 +1,4 @@
-package br.com.rubim.test.fake.filters;
+package br.com.labbs.quarkusmonitor.test.fake.filters;
 
 import java.io.IOException;
 import javax.annotation.Priority;

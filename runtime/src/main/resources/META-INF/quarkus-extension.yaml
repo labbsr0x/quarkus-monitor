@@ -2,7 +2,7 @@ name: "Big Brother Metrics extension"
 metadata:
   keywords:
     - "metrics"
-  guide: "https://github.com/marcelorubim/quarkus-monitor/"
+  guide: "https://github.com/labbsr0x/quarkus-monitor/"
   categories:
     - "data"
   status: "stable"

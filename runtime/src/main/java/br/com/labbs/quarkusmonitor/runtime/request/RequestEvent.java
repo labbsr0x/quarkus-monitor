@@ -1,8 +1,7 @@
-package br.com.rubim.runtime.dependency;
+package br.com.labbs.quarkusmonitor.runtime.request;
 
-public class DependencyEvent {
+public class RequestEvent {
 
-  private String name;
   private String type;
   private String status;
   private String method;
@@ -10,8 +9,7 @@ public class DependencyEvent {
   private String isError;
   private String errorMessage;
 
-  public DependencyEvent(String name) {
-    this.name = name;
+  public RequestEvent() {
     this.type = "";
     this.status = "";
     this.method = "";
@@ -20,15 +18,11 @@ public class DependencyEvent {
     this.errorMessage = "";
   }
 
-  public String getName() {
-    return name;
-  }
-
   public String getType() {
     return type;
   }
 
-  public DependencyEvent setType(String type) {
+  public RequestEvent setType(String type) {
     this.type = type;
     return this;
   }
@@ -37,7 +31,7 @@ public class DependencyEvent {
     return status;
   }
 
-  public DependencyEvent setStatus(String status) {
+  public RequestEvent setStatus(String status) {
     this.status = status;
     return this;
   }
@@ -46,7 +40,7 @@ public class DependencyEvent {
     return method;
   }
 
-  public DependencyEvent setMethod(String method) {
+  public RequestEvent setMethod(String method) {
     this.method = method;
     return this;
   }
@@ -55,7 +49,7 @@ public class DependencyEvent {
     return address;
   }
 
-  public DependencyEvent setAddress(String address) {
+  public RequestEvent setAddress(String address) {
     this.address = address;
     return this;
   }
@@ -64,7 +58,7 @@ public class DependencyEvent {
     return isError;
   }
 
-  public DependencyEvent setIsError(boolean isError) {
+  public RequestEvent setIsError(boolean isError) {
     this.isError = Boolean.toString(isError);
     return this;
   }
@@ -73,7 +67,7 @@ public class DependencyEvent {
     return errorMessage;
   }
 
-  public DependencyEvent setErrorMessage(String errorMessage) {
+  public RequestEvent setErrorMessage(String errorMessage) {
     this.errorMessage = errorMessage;
     return this;
   }

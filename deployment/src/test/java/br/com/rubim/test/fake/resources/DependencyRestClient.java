@@ -1,4 +1,4 @@
-package br.com.rubim.test.fake.resources;
+package br.com.labbs.quarkusmonitor.test.fake.resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

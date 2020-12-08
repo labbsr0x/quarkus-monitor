@@ -1,9 +1,9 @@
-package br.com.rubim.runtime;
+package br.com.labbs.quarkusmonitor.runtime;
 
-import br.com.rubim.runtime.core.Metrics;
-import br.com.rubim.runtime.dependency.DependencyEvent;
-import br.com.rubim.runtime.dependency.DependencyState;
-import br.com.rubim.runtime.request.RequestEvent;
+import br.com.labbs.quarkusmonitor.runtime.core.Metrics;
+import br.com.labbs.quarkusmonitor.runtime.dependency.DependencyEvent;
+import br.com.labbs.quarkusmonitor.runtime.dependency.DependencyState;
+import br.com.labbs.quarkusmonitor.runtime.request.RequestEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;

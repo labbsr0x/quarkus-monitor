@@ -1,10 +1,10 @@
-package br.com.labbs.quarkusmonitor.test.metrics;
+package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import br.com.labbs.quarkusmonitor.test.fake.filters.MetricsFilterForError;
-import br.com.labbs.quarkusmonitor.test.fake.resources.RequestResource;
+import br.com.labbs.quarkusmonitor.deployment.test.filters.MetricsFilterForError;
+import br.com.labbs.quarkusmonitor.deployment.test.resources.RequestResource;
 import io.micrometer.core.instrument.Metrics;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

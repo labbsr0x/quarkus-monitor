@@ -1,15 +1,15 @@
-package br.com.labbs.quarkusmonitor.test.metrics;
+package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import br.com.labbs.quarkusmonitor.deployment.test.filters.MetricsFilterForError;
+import br.com.labbs.quarkusmonitor.deployment.test.resources.DependencyResource;
+import br.com.labbs.quarkusmonitor.deployment.test.resources.DependencyRestClient;
 import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
 import br.com.labbs.quarkusmonitor.runtime.dependency.DependencyState;
-import br.com.labbs.quarkusmonitor.test.fake.filters.MetricsFilterForError;
-import br.com.labbs.quarkusmonitor.test.fake.resources.DependencyResource;
-import br.com.labbs.quarkusmonitor.test.fake.resources.DependencyRestClient;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Metrics;
 import io.quarkus.test.QuarkusUnitTest;
@@ -120,6 +120,11 @@ public class DependencyUpMetricsTest {
 
     assertTimeout(Duration.ofMillis(200), () -> {
       while (Metrics.globalRegistry.find(NAME).gauges().size() <= 0) {
+        try {
+          TimeUnit.MILLISECONDS.sleep(1);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
       }
     }, "Timeout to execute a dependency checker");
 

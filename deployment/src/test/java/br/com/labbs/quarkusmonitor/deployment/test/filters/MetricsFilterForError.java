@@ -1,6 +1,5 @@
-package br.com.labbs.quarkusmonitor.test.fake.filters;
+package br.com.labbs.quarkusmonitor.deployment.test.filters;
 
-import java.io.IOException;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
@@ -21,7 +20,7 @@ public class MetricsFilterForError implements ContainerResponseFilter, ClientRes
 
   @Override
   public void filter(ContainerRequestContext request,
-      ContainerResponseContext response) throws IOException {
+      ContainerResponseContext response) {
     if (response.getStatus() >= 400) {
       request.setProperty(errorKey, "error with describe in container");
     }
@@ -29,7 +28,7 @@ public class MetricsFilterForError implements ContainerResponseFilter, ClientRes
 
   @Override
   public void filter(ClientRequestContext clientRequestContext,
-      ClientResponseContext clientResponseContext) throws IOException {
+      ClientResponseContext clientResponseContext) {
     if (clientResponseContext.getStatus() >= 400) {
       clientRequestContext.setProperty(errorKey, "error with describe in container");
     }

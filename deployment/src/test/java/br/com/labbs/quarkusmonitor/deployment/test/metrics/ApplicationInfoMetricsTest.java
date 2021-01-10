@@ -1,9 +1,9 @@
-package br.com.labbs.quarkusmonitor.test.metrics;
+package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import br.com.labbs.quarkusmonitor.test.fake.resources.RequestResource;
+import br.com.labbs.quarkusmonitor.deployment.test.resources.RequestResource;
 import io.micrometer.core.instrument.Metrics;
 import io.quarkus.test.QuarkusUnitTest;
 import org.eclipse.microprofile.config.inject.ConfigProperty;

@@ -1,10 +1,10 @@
-package br.com.labbs.quarkusmonitor.test.metrics;
+package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 
-import br.com.labbs.quarkusmonitor.test.fake.resources.RequestResource;
+import br.com.labbs.quarkusmonitor.deployment.test.resources.RequestResource;
 import io.quarkus.test.QuarkusUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -12,7 +12,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class EndpointMetrics {
+public class EndpointMetricsTest {
 
   @RegisterExtension
   static QuarkusUnitTest test = new QuarkusUnitTest()

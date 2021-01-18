@@ -95,7 +95,7 @@ Import the following dependency to your project:
 <dependency>
   <groupId>br.com.labbs</groupId>
   <artifactId>quarkus-monitor</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
 </dependency>
 ```
 

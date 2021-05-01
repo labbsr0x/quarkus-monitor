@@ -9,14 +9,14 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 @Provider
 @Priority(Priorities.USER)
 public class MetricsFilterForError implements ContainerResponseFilter, ClientResponseFilter {
 
-  @ConfigProperty(name = "quarkus.b5.monitor.error-message")
-  String errorKey;
+  String errorKey = ConfigProvider.getConfig().getOptionalValue("quarkus.b5.monitor.error-message", String.class)
+      .orElse("error-info");
 
   @Override
   public void filter(ContainerRequestContext request,

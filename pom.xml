@@ -1,5 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.com.labbs</groupId>
+  <artifactId>quarkus-monitor-parent</artifactId>
+  <version>0.1.6-SNAPSHOT</version>
+
+  <description>Extension to add Big Brother Metrics</description>
+  <url>https://github.com/labbsr0x/quarkus-monitor/</url>
+  <name>quarkus-monitor-parent</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <apache-rat-plugin-version>0.13</apache-rat-plugin-version>
+    <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
+    <maven-deploy-plugin-version>2.8.2</maven-deploy-plugin-version>
+    <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
+    <maven-enforcer-plugin-version>1.4.1</maven-enforcer-plugin-version>
+    <maven-failsafe-plugin-version>2.22.1</maven-failsafe-plugin-version>
+    <maven-gpg-plugin-version>1.6</maven-gpg-plugin-version>
+
+    <maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
+    <maven-jar-plugin-version>3.1.0</maven-jar-plugin-version>
+    <maven-javadoc-plugin-version>3.1.0</maven-javadoc-plugin-version>
+    <maven-release-plugin-version>2.5.3</maven-release-plugin-version>
+    <maven-source-plugin-version>3.0.1</maven-source-plugin-version>
+    <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
+    <maven.compiler.parameters>true</maven.compiler.parameters>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <micrometer-registry-prometheus.version>1.6.0</micrometer-registry-prometheus.version>
+
+    <quarkus.version>1.9.2.Final</quarkus.version>
+    <supported-maven-versions>[3.5.3,)</supported-maven-versions>
+
+  </properties>
+
+  <licenses>
+    <license>
+      <distribution>repo</distribution>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/labbsr0x/quarkus-monitor/</connection>
+    <developerConnection>scm:git:https://github.com/labbsr0x/quarkus-monitor/
+    </developerConnection>
+    <tag>0.1.0-SNAPSHOT</tag>
+    <url>https://github.com/labbsr0x/quarkus-monitor/</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <email>marcelorubim@gmail.com</email>
+      <name>Marcelo Rubim</name>
+    </developer>
+    <developer>
+      <email>carlospanarello@gmail.com</email>
+      <name>Carlos E Panarelo</name>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>bom</module>
+    <module>deployment</module>
+    <module>runtime</module>
+  </modules>
+
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -142,82 +224,4 @@
       </plugin>
     </plugins>
   </build>
-  <description>Extension to add Big Brother Metrics</description>
-  <artifactId>quarkus-monitor-parent</artifactId>
-  <developers>
-    <developer>
-      <email>marcelorubim@gmail.com</email>
-      <name>Marcelo Rubim</name>
-    </developer>
-    <developer>
-      <email>carlospanarello@gmail.com</email>
-      <name>Carlos E Panarelo</name>
-    </developer>
-  </developers>
-  <distributionManagement>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <groupId>br.com.labbs</groupId>
-  <licenses>
-    <license>
-      <distribution>repo</distribution>
-      <name>Apache License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-  <modelVersion>4.0.0</modelVersion>
-  <modules>
-    <module>bom</module>
-    <module>deployment</module>
-    <module>runtime</module>
-  </modules>
-
-  <name>quarkus-monitor-parent</name>
-  <packaging>pom</packaging>
-
-  <properties>
-    <apache-rat-plugin-version>0.13</apache-rat-plugin-version>
-    <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
-    <maven-deploy-plugin-version>2.8.2</maven-deploy-plugin-version>
-    <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
-    <maven-enforcer-plugin-version>1.4.1</maven-enforcer-plugin-version>
-    <maven-failsafe-plugin-version>2.22.1</maven-failsafe-plugin-version>
-    <maven-gpg-plugin-version>1.6</maven-gpg-plugin-version>
-
-    <maven-idea-plugin-version>2.2.1</maven-idea-plugin-version>
-    <maven-jar-plugin-version>3.1.0</maven-jar-plugin-version>
-    <maven-javadoc-plugin-version>3.1.0</maven-javadoc-plugin-version>
-    <maven-release-plugin-version>2.5.3</maven-release-plugin-version>
-    <maven-source-plugin-version>3.0.1</maven-source-plugin-version>
-    <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
-    <maven.compiler.parameters>true</maven.compiler.parameters>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <micrometer-registry-prometheus.version>1.6.0</micrometer-registry-prometheus.version>
-
-    <quarkus.version>1.9.2.Final</quarkus.version>
-    <supported-maven-versions>[3.5.3,)</supported-maven-versions>
-
-  </properties>
-
-  <scm>
-    <connection>scm:git:https://github.com/labbsr0x/quarkus-monitor/</connection>
-    <developerConnection>scm:git:https://github.com/labbsr0x/quarkus-monitor/
-    </developerConnection>
-    <tag>0.1.0-SNAPSHOT</tag>
-    <url>https://github.com/labbsr0x/quarkus-monitor/</url>
-  </scm>
-  <url>https://github.com/labbsr0x/quarkus-monitor/</url>
-  <version>0.1.4-SNAPSHOT</version>
-
 </project>

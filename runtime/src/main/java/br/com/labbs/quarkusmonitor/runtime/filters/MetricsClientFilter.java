@@ -3,7 +3,6 @@ package br.com.labbs.quarkusmonitor.runtime.filters;
 import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
 import br.com.labbs.quarkusmonitor.runtime.core.Metrics;
 import br.com.labbs.quarkusmonitor.runtime.util.TagsUtil;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import javax.annotation.Priority;
@@ -20,13 +19,12 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
     private static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS_CLIENT";
 
     @Override
-    public void filter(ClientRequestContext clientRequestContext) throws IOException {
+    public void filter(ClientRequestContext clientRequestContext) {
         clientRequestContext.setProperty(TIMER_INIT_TIME_MILLISECONDS, Instant.now());
     }
 
     @Override
-    public void filter(ClientRequestContext clientRequestContext, ClientResponseContext clientResponseContext)
-            throws IOException {
+    public void filter(ClientRequestContext clientRequestContext, ClientResponseContext clientResponseContext) {
         var labels = TagsUtil.extractLabelValues(clientRequestContext, clientResponseContext);
         Method method = (Method) clientRequestContext.getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
 
@@ -39,7 +37,7 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {
             Instant init = (Instant) clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS);
             Metrics.dependencyRequestSeconds(labels,
-                MonitorMetrics.INSTANCE.calcTimeElapsedInSeconds(init));
+                MonitorMetrics.calcTimeElapsedInSeconds(init));
         }
     }
 }

@@ -37,4 +37,5 @@ class ApplicationInfoMetricsTest {
         Metrics.globalRegistry.get("application_info").counter().getId().getTag("version"),
         "Metric with wrong label value");
   }
+
 }

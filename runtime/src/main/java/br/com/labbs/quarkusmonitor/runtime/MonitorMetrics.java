@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 public class MonitorMetrics {
 
   private static final Logger LOG = LoggerFactory.getLogger(MonitorMetrics.class);
-  public static MonitorMetrics INSTANCE = new MonitorMetrics();
-  private static final BigDecimal MULTIPLIER_NANO_TO_SECONDS = new BigDecimal(1.0E9D);
-  private Map<String, ScheduledExecutorService> schedulesCheckers;
+  public static final MonitorMetrics INSTANCE = new MonitorMetrics();
+  private static final BigDecimal MULTIPLIER_NANO_TO_SECONDS = BigDecimal.valueOf(1.0E9D);
+  private final Map<String, ScheduledExecutorService> schedulesCheckers;
 
   private MonitorMetrics() {
     schedulesCheckers = new HashMap<>();
@@ -78,7 +78,11 @@ public class MonitorMetrics {
     try {
       LOG.debug("attempt to shutdown executor {}", name);
       executor.shutdown();
-      executor.awaitTermination(1, TimeUnit.SECONDS);
+      if (executor.awaitTermination(1, TimeUnit.SECONDS)){
+        LOG.debug("tasks shutdown in executor {} successfully.", name);
+      } else {
+        LOG.debug("tasks interrupted in executor {}", name);
+      }
     } catch (InterruptedException e) {
       LOG.debug("tasks interrupted in executor {}", name);
     } finally {

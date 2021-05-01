@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class DependencyRequestSecondsMetricsTest {
+class DependencyRequestSecondsMetricsTest {
 
   private static final String SIMPLE_PATH = "/dep/simple";
   private static final String NAME = "dependency_request_seconds";
@@ -37,16 +37,16 @@ public class DependencyRequestSecondsMetricsTest {
               DependencyRestClient.class)
           .addAsResource(
               new StringAsset("quarkus.b5.monitor.enable-http-response-size=false\n" +
-                  "br.com.labbs.quarkusmonitor.test.fake.resources.DependencyRestClient/mp-rest/url=${test.url}"),
+                  "dependencyRestClient/mp-rest/url=${test.url}"),
               "application.properties"));
 
   @RestClient
   DependencyRestClient restClient;
 
-  @ConfigProperty(name = "quarkus.b5.monitor.error-message")
+  @ConfigProperty(name = "quarkus.b5.monitor.error-message", defaultValue = "error-info")
   String errorKey;
 
-  @ConfigProperty(name = "quarkus.b5.monitor.buckets")
+  @ConfigProperty(name = "quarkus.b5.monitor.buckets", defaultValue = "0.1, 0.3, 1.5, 10.5" )
   List<String> buckets;
 
   @BeforeEach

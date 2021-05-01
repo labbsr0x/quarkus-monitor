@@ -35,7 +35,7 @@ public class DependencyUpMetricsTest {
               DependencyRestClient.class)
           .addAsResource(
               new StringAsset("quarkus.b5.monitor.enable-http-response-size=false\n" +
-                  "br.com.labbs.quarkusmonitor.test.fake.resources.DependencyRestClient/mp-rest/url=${test.url}"),
+                  "dependencyRestClient/mp-rest/url=${test.url}"),
               "application.properties"));
 
   @RestClient

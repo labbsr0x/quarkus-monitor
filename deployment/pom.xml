@@ -63,8 +63,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <artifactId>quarkus-junit5-internal</artifactId>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5-internal</artifactId>
       <scope>test</scope>
       <version>${quarkus.version}</version>
     </dependency>
@@ -73,6 +73,12 @@
       <groupId>io.rest-assured</groupId>
       <scope>test</scope>
       <version>${rest-assured.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5</artifactId>
+      <scope>test</scope>
+      <version>${quarkus.version}</version>
     </dependency>
   </dependencies>
 
@@ -84,7 +90,7 @@
     <artifactId>quarkus-monitor-parent</artifactId>
     <groupId>br.com.labbs</groupId>
     <relativePath>../</relativePath>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.1.6-SNAPSHOT</version>
   </parent>
 
   <properties>

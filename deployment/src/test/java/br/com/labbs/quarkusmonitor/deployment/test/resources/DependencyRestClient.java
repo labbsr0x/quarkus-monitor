@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @Path("/dep")
-@RegisterRestClient
+@RegisterRestClient(configKey = "dependencyRestClient")
 public interface DependencyRestClient {
 
   @GET

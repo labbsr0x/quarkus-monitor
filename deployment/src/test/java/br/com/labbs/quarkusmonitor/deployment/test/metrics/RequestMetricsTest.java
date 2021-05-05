@@ -9,11 +9,12 @@ import br.com.labbs.quarkusmonitor.deployment.test.filters.MetricsFilterForError
 import br.com.labbs.quarkusmonitor.deployment.test.resources.RequestResource;
 import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
 import br.com.labbs.quarkusmonitor.runtime.request.RequestEvent;
-import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Timer;
 import io.quarkus.test.QuarkusUnitTest;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -58,12 +59,12 @@ class RequestMetricsTest {
 
     when().get(SIMPLE_PATH).then().statusCode(200);
 
-    var samples = Metrics.globalRegistry.find(NAME).summaries();
+    var samples = Metrics.globalRegistry.find(NAME).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
 
-    var sample = samples.toArray(new DistributionSummary[0])[0];
+    var sample = samples.toArray(new Timer[0])[0];
 
     assertEquals(buckets.size(), sample.takeSnapshot().histogramCounts().length,
         "Metric with wrong number of buckets");
@@ -75,7 +76,7 @@ class RequestMetricsTest {
     assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
     assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
 
-    assertTrue(sample.totalAmount() > 0, "Metric " + NAME + "_sum with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + NAME + "_sum with wrong value");
     assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
 
     when().get(SIMPLE_PATH).then().statusCode(200);
@@ -86,8 +87,8 @@ class RequestMetricsTest {
   void testCreatingRequestMetricsWithTagErrorInHeader() {
     when().get(ERROR_PATH + "header/400" + "/" + errorKey).then().statusCode(400);
 
-    var sample = Metrics.globalRegistry.find(NAME).summaries()
-        .toArray(new DistributionSummary[0])[0];
+    var sample = Metrics.globalRegistry.find(NAME).timers()
+        .toArray(new Timer[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"),
         "Receive wrong value for Tag isError");
@@ -99,8 +100,8 @@ class RequestMetricsTest {
   void testCreatingRequestMetricsWithTagErrorInContainer() {
     when().get(ERROR_PATH + "container/400").then().statusCode(400);
 
-    var sample = Metrics.globalRegistry.find(NAME).summaries()
-        .toArray(new DistributionSummary[0])[0];
+    var sample = Metrics.globalRegistry.find(NAME).timers()
+        .toArray(new Timer[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"), "Receive wrong value for Tag isError");
     assertEquals("error with describe in container", sample.getId().getTag("errorMessage"),
@@ -136,12 +137,12 @@ class RequestMetricsTest {
 
     MonitorMetrics.INSTANCE.addRequestEvent(requestEvent, 1d);
 
-    var samples = Metrics.globalRegistry.find(NAME).summaries();
+    var samples = Metrics.globalRegistry.find(NAME).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
 
-    var sample = samples.toArray(new DistributionSummary[0])[0];
+    var sample = samples.toArray(new Timer[0])[0];
 
     assertEquals(buckets.size(), sample.takeSnapshot().histogramCounts().length,
         "Metric with wrong number of buckets");
@@ -153,8 +154,7 @@ class RequestMetricsTest {
     assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
     assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
 
-    assertTrue(sample.totalAmount() > 0, "Metric request_seconds_sum with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS)  > 0, "Metric request_seconds_sum with wrong value");
     assertEquals(1, sample.count(), "Metric request_seconds_count with wrong value");
   }
-
 }

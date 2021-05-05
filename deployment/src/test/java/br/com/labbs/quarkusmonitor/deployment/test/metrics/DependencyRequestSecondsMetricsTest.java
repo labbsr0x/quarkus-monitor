@@ -9,12 +9,13 @@ import br.com.labbs.quarkusmonitor.deployment.test.resources.DependencyResource;
 import br.com.labbs.quarkusmonitor.deployment.test.resources.DependencyRestClient;
 import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
 import br.com.labbs.quarkusmonitor.runtime.dependency.DependencyEvent;
-import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Timer;
 import io.quarkus.test.QuarkusUnitTest;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.ws.rs.WebApplicationException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -63,12 +64,12 @@ class DependencyRequestSecondsMetricsTest {
 
     restClient.simple(200);
 
-    var samples = Metrics.globalRegistry.find(NAME).summaries();
+    var samples = Metrics.globalRegistry.find(NAME).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
 
-    var sample = samples.toArray(new DistributionSummary[0])[0];
+    var sample = samples.toArray(new Timer[0])[0];
     assertEquals(buckets.size(), sample.takeSnapshot().histogramCounts().length,
         "Metric with wrong number of buckets");
 
@@ -79,7 +80,7 @@ class DependencyRequestSecondsMetricsTest {
     assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
     assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
 
-    assertTrue(sample.totalAmount() > 0, "Metric " + NAME + "_sum with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + NAME + "_sum with wrong value");
     assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
 
     restClient.simple(200);
@@ -136,12 +137,12 @@ class DependencyRequestSecondsMetricsTest {
 
     MonitorMetrics.INSTANCE.addDependencyEvent(dependencyEvent, 1d);
 
-    var samples = Metrics.globalRegistry.find(NAME).summaries();
+    var samples = Metrics.globalRegistry.find(NAME).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
 
-    var sample = samples.toArray(new DistributionSummary[0])[0];
+    var sample = samples.toArray(new Timer[0])[0];
     assertEquals(buckets.size(), sample.takeSnapshot().histogramCounts().length,
         "Metric with wrong number of buckets");
 
@@ -152,7 +153,7 @@ class DependencyRequestSecondsMetricsTest {
     assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
     assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
 
-    assertTrue(sample.totalAmount() > 0, "Metric " + NAME + "_sum with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + NAME + "_sum with wrong value");
     assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
   }
 }

@@ -19,6 +19,13 @@ public class B5NamingConvention implements NamingConvention {
     this.timerSuffix = timerSuffix;
   }
 
+  private boolean isNotB5MetricName(String name){
+    return !name.startsWith("application_info") &&
+        !name.startsWith("response_size_bytes") &&
+        !name.startsWith("request_seconds") &&
+        !name.startsWith("dependency_request_seconds");
+  }
+
   /**
    * Names are snake-cased. They contain a base unit suffix when applicable.
    * <p>
@@ -33,7 +40,8 @@ public class B5NamingConvention implements NamingConvention {
       case COUNTER:
       case DISTRIBUTION_SUMMARY:
       case GAUGE:
-        if (baseUnit != null && !conventionName.endsWith("_" + baseUnit))
+        if (baseUnit != null && !conventionName.endsWith("_" + baseUnit) && isNotB5MetricName(
+            conventionName))
           conventionName += "_" + baseUnit;
         break;
       default:
@@ -42,17 +50,15 @@ public class B5NamingConvention implements NamingConvention {
 
     switch (type) {
       case COUNTER:
-        if (!conventionName.endsWith("_total") &&
-            !conventionName.startsWith("application_info") &&
-            !conventionName.startsWith("response_size_bytes")) {
+        if (!conventionName.endsWith("_total") && isNotB5MetricName(conventionName)) {
           conventionName += "_total";
         }
         break;
       case TIMER:
       case LONG_TASK_TIMER:
-        if (conventionName.endsWith(timerSuffix)) {
+        if (conventionName.endsWith(timerSuffix) && isNotB5MetricName(conventionName)) {
           conventionName += SECONDS;
-        } else if (!conventionName.endsWith(SECONDS))
+        } else if (!conventionName.endsWith(SECONDS) && isNotB5MetricName(conventionName))
           conventionName += timerSuffix + SECONDS;
         break;
       default:
@@ -72,6 +78,10 @@ public class B5NamingConvention implements NamingConvention {
    */
   @Override
   public String tagKey(String key) {
+    return tagConvert(key);
+  }
+
+  public static String tagConvert(String key){
     String conventionKey = NamingConvention.snakeCase.tagKey(key);
 
     String sanitized = tagKeyChars.matcher(conventionKey).replaceAll("_");

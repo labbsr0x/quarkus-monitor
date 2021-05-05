@@ -1,10 +1,13 @@
 package br.com.labbs.quarkusmonitor.runtime.core;
 
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Timer;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,10 +34,10 @@ public class Metrics {
   private static final List<String> tagsKeysDependency = Arrays
       .asList(NAME, TYPE, STATUS, METHOD, ADDR, IS_ERROR, ERROR_MESSAGE);
 
-  private static MeterRegistry registry = CDI.current().select(MeterRegistry.class).get();
-  private static ConcurrentMap<String, AtomicInteger> gaugeMap = new ConcurrentHashMap<>();
+  private static final MeterRegistry registry = CDI.current().select(MeterRegistry.class).get();
+  private static final ConcurrentMap<String, AtomicInteger> gaugeMap = new ConcurrentHashMap<>();
 
-  private static double[] bucketsValues = Arrays.stream(
+  private static final double[] bucketsValues = Arrays.stream(
       ConfigProvider.getConfig().getOptionalValue("quarkus.b5.monitor.buckets", String.class)
           .orElse("0.1, 0.3, 1.5, 10.5").split(","))
       .map(String::trim).mapToDouble(Double::parseDouble).toArray();
@@ -48,13 +51,13 @@ public class Metrics {
    *
    * @param tagsValues values in order for tag keys NAME, TYPE, STATUS, METHOD, ADDR, IS_ERROR,
    * ERROR_MESSAGE
-   * @param seconds seconds elapsed to execute request.
+   * @param seconds how long time did the dependency request has executed
    */
   public static void dependencyRequestSeconds(String[] tagsValues, double seconds) {
-    createDistributionSummary("dependency_request_seconds",
+    createTimer("dependency_request_seconds",
         "records in a histogram the number of requests of a dependency and their duration in seconds",
         tagWithValue(tagsKeysDependency, tagsValues),
-        seconds);
+        secondsToMilliseconds(seconds), ChronoUnit.MILLIS);
   }
 
   /**
@@ -63,25 +66,38 @@ public class Metrics {
    *
    * @param tagsValues values in order for tag keys TYPE, STATUS, METHOD, ADDR, IS_ERROR,
    * ERROR_MESSAGE
-   * @param seconds seconds elapsed to execute request.
+   * @param seconds how long time did the request has executed
    */
   public static void requestSeconds(String[] tagsValues, double seconds) {
-    createDistributionSummary("request_seconds",
+    createTimer("request_seconds",
         "records in a histogram the number of http requests and their duration in seconds",
         tagWithValue(tagsKeysRequest, tagsValues),
-        seconds);
+        secondsToMilliseconds(seconds), ChronoUnit.MILLIS);
   }
 
-  private static void createDistributionSummary(String name, String description, Iterable<Tag> tags,
-      double value) {
-    Optional.ofNullable(registry.find(name).tags(tags).summary()).ifPresentOrElse(
-        metric -> metric.record(value),
-        () -> DistributionSummary.builder(name)
+  private static void createTimer(String name, String description, Iterable<Tag> tags,
+      long value, TemporalUnit unit) {
+    Optional.ofNullable(registry.find(name).tags(tags).timer()).ifPresentOrElse(
+        metric -> metric.record(Duration.of(value,unit)),
+        () -> Timer.builder(name)
             .description(description)
             .tags(tags)
-            .serviceLevelObjectives(bucketsValues)
-            .register(registry).record(value)
+            .serviceLevelObjectives(createDuration(bucketsValues, unit))
+            .register(registry)
+            .record(Duration.of(value, unit))
     );
+  }
+
+  private static Duration[] createDuration(double[] values,TemporalUnit unit){
+    return Arrays.stream(values).mapToObj(v-> Duration.of(secondsToMilliseconds(v), unit)).toArray(Duration[]::new);
+  }
+
+  private static long secondsToMilliseconds(double seconds){
+    var result = seconds * 1000;
+    if(result > Long.MAX_VALUE) {
+      return Long.MAX_VALUE;
+    }
+    return (long) result;
   }
 
   /**
@@ -149,13 +165,14 @@ public class Metrics {
   }
 
   private static void createGaugeDependency(Tag tag) {
-    if (registry.find("dependency_up").tags(Collections.singletonList(tag)).gauge() == null) {
+    if(registry.find("dependency_up").tags(Collections.singletonList(tag)).gauge() == null){
       var value = new AtomicInteger(0);
       gaugeMap.put(tag.getValue(), value);
       Gauge.builder("dependency_up", value::get)
-          .description(
-              "is a metric to register weather a specific dependency is up (1) or down (0). The label name registers the dependency name")
-          .tags(Collections.singletonList(tag)).register(registry);
+          .description("is a metric to register weather a specific dependency is up (1) or down (0). "
+              + "The label name registers the dependency name")
+          .tags(Collections.singletonList(tag))
+          .register(registry);
     }
   }
 

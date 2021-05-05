@@ -2,8 +2,8 @@ package br.com.labbs.quarkusmonitor.runtime.filters;
 
 import br.com.labbs.quarkusmonitor.runtime.MonitorMetrics;
 import br.com.labbs.quarkusmonitor.runtime.core.Metrics;
+import br.com.labbs.quarkusmonitor.runtime.util.FilterUtils;
 import br.com.labbs.quarkusmonitor.runtime.util.TagsUtil;
-import java.lang.reflect.Method;
 import java.time.Instant;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -26,12 +26,11 @@ public class MetricsClientFilter implements ClientResponseFilter, ClientRequestF
     @Override
     public void filter(ClientRequestContext clientRequestContext, ClientResponseContext clientResponseContext) {
         var labels = TagsUtil.extractLabelValues(clientRequestContext, clientResponseContext);
-        Method method = (Method) clientRequestContext.getProperty("org.eclipse.microprofile.rest.client.invokedMethod");
-
+        var tagNameValue = FilterUtils.extractClassNameFromMethod(clientRequestContext);
         if (clientResponseContext.getStatus() >= 200 && clientResponseContext.getStatus() < 500) {
-            Metrics.dependencyUp(method.getDeclaringClass().getCanonicalName());
+            Metrics.dependencyUp(tagNameValue);
         } else if (clientResponseContext.getStatus() >= 500) {
-            Metrics.dependencyDown(method.getDeclaringClass().getCanonicalName());
+            Metrics.dependencyDown(tagNameValue);
         }
 
         if (clientRequestContext.getProperty(TIMER_INIT_TIME_MILLISECONDS) != null) {

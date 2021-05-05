@@ -1,9 +1,11 @@
 package br.com.labbs.quarkusmonitor.runtime.util;
 
+import br.com.labbs.quarkusmonitor.runtime.config.B5NamingConvention;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import javax.inject.Named;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -43,8 +45,14 @@ public class FilterUtils {
 
   public static String extractClassNameFromMethod(ClientRequestContext request) {
     if (request.getProperty(REST_CLIENT_METHOD) instanceof Method) {
-      return ((Method) request.getProperty(REST_CLIENT_METHOD)).getDeclaringClass()
-          .getCanonicalName();
+      var method = (Method) request.getProperty(REST_CLIENT_METHOD);
+      var annotation = method.getDeclaringClass().getAnnotation(Named.class);
+
+      if(annotation != null && !annotation.value().isBlank() ){
+        return B5NamingConvention.tagConvert(annotation.value());
+      }
+
+      return method.getDeclaringClass().getCanonicalName();
     }
 
     return "";

@@ -152,4 +152,5 @@ public class MonitorMetrics {
     BigDecimal diff = new BigDecimal(Duration.between(init, finish).toNanos());
     return diff.divide(MULTIPLIER_NANO_TO_SECONDS, 9, RoundingMode.HALF_UP).doubleValue();
   }
+
 }

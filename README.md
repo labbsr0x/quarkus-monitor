@@ -1,8 +1,8 @@
-## Extension to add BB Metrics to Quarkus Projects
+# Extension to add BB Metrics to Quarkus Projects
 
 This projects implements the [Big Brother](https://github.com/labbsr0x/big-brother) Metrics specfication through a [Quarkus](https://quarkus.io) extension.
 
-### Metrics 
+## Metrics 
 
 This extensions uses quarkus micrometer extension to create the following metrics 
 
@@ -58,38 +58,38 @@ Labels:
 8. `name` registers the name of the dependency;
 
 
-#### How it works
+### How it works
 
 In this project we have three types of metrics, request, dependency and application info, the first two are created using filters, the third is for holding static version info. 
 
-##### Request
+#### Request
 The filters in the request metric type are created using ContainerRequestFilter, ContainerResponseFilter from JAX-RS, 
 so only the endpoint using JAX-RS will have its metrics created automatically, and you can disable it using the [exclusion path configuration](#how-to-config).
 The addr tag will be filled with the path in the same pattern used in JAX-RS, like  `@Path("/user/{id})`.
 
 But if you need to create your own request metric you could use the addRequestEvent method in MonitorMetrics.
 
-##### Dependency
+#### Dependency
 
 This project defines as Dependency any service called through REST. The dependency metrics are collected 
 by a [MicroProfile Rest Client Provider](https://download.eclipse.org/microprofile/microprofile-rest-client-1.2.1/microprofile-rest-client-1.2.1.html#providers) implementation.
 The name of the dependency is the interface name which defines the RestClient. In this implementation, all requests made using rest client will create two metrics,
 which are dependency_up and dependency_request. The addr tag will be filled with path in the same pattern used in JAX-RS, like  `@Path("/user/{id})`.
 
-###### Dependency_up
+##### Dependency_up
 If the request made using RestClient returns a status code between 200 and 499 it will be considered up, 
 if status code is greater than or equal 500 it will be consider down. 
 
 If you needed to create your own dependency_up metric, you can use the addDependencyChecker method in MonitorMetrics to add a checker if your dependency is up or down.
 
-###### Dependency_request
+##### Dependency_request
 You can create your own dependency_request metric using addDependencyEvent method in MonitorMetrics to add a new dependency request event.
 
-#### How to Use
+### How to Use
 
 Import the following dependency to your project:
 
-##### Maven
+#### Maven
 
 ```xml
 <dependency>
@@ -99,7 +99,7 @@ Import the following dependency to your project:
 </dependency>
 ```
 
-#### How to config
+### How to config
 
 These are properties that you can use to config your b5 quarkus monitor, all properties will start with  `quarkus.b5.monitor`
 
@@ -113,22 +113,22 @@ buckets                  | Values in seconds for the buckets used in b5 metrics 
 error-message            | Key for error messages in the header or request attribute | error-info
 
 
-#### How to add error messages in tag
+### How to add error messages in tag
 First you need to define the key in error-message in the properties, default value is error-info.
 Choose your way, by the header or adding the property in ContainerRequestContext. This extension will look first in the header, 
 if it is not found it will look in the properties of ContainerRequestContext.
 The errors messages will be added only when the status code is greater than or equal 400.
 
-##### Adding in the header
+#### Adding in the header
 Add in the response header the same key used in error-message, or use error-info, then put your string content for the error.
 
-##### Adding in ContainerRequestContext
+#### Adding in ContainerRequestContext
 Add in the setProperty the same key used in error-message, or use error-info, then put your string content for the error.
 
 
-#### How to Implement
+### How to Implement
 
-##### Request
+#### Request
 
 If you create your endpoint using JAX-RS, this extension will create request metrics automatically.
 To add your own request metric event you can do like this example:
@@ -148,6 +148,12 @@ To add your own request metric event you can do like this example:
   double timeElapsed = MonitorMetrics.calcTimeElapsedInSeconds(start);
   MonitorMetrics.INSTANCE.addRequestEvent(requestEvent, timeElapsed);
 ```
+
+##### Dependency
+
+For Dependency metrics ,Dependency up and Dependency Request, if you are using the Rest Client from 
+JAX-RS, the value of tag name will be extract from annotation @Name from java.inject, if present, 
+or canonical name of interface used in Rest Client.
 
 ##### Dependency Up
 

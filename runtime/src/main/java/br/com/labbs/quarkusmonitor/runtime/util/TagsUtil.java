@@ -13,7 +13,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 public class TagsUtil {
 
   private static final String HTTP = "http";
-  private static final String errorMessageKey = ConfigProvider.getConfig()
+  private static final String ERROR_MESSAGE_KEY = ConfigProvider.getConfig()
       .getOptionalValue("quarkus.b5.monitor.error-message", String.class).orElse("error-info");
 
   private TagsUtil() {
@@ -63,34 +63,34 @@ public class TagsUtil {
 
   private static String extractMessageError(ContainerRequestContext request,
       ContainerResponseContext response) {
-    if (response.getHeaderString(errorMessageKey) != null) {
-      return response.getHeaderString(errorMessageKey);
+    if (response.getHeaderString(ERROR_MESSAGE_KEY) != null) {
+      return response.getHeaderString(ERROR_MESSAGE_KEY);
     }
 
-    if (request.getProperty(errorMessageKey) != null) {
-      return request.getProperty(errorMessageKey).toString();
+    if (request.getProperty(ERROR_MESSAGE_KEY) != null) {
+      return request.getProperty(ERROR_MESSAGE_KEY).toString();
     }
     return "";
   }
 
   private static String extractMessageError(WriterInterceptorContext context) {
-    if (context.getHeaders().containsKey(errorMessageKey)) {
-      return context.getHeaders().get(errorMessageKey).get(0).toString();
+    if (context.getHeaders().containsKey(ERROR_MESSAGE_KEY)) {
+      return context.getHeaders().get(ERROR_MESSAGE_KEY).get(0).toString();
     }
 
-    if (context.getProperty(errorMessageKey) != null) {
-      return context.getProperty(errorMessageKey).toString();
+    if (context.getProperty(ERROR_MESSAGE_KEY) != null) {
+      return context.getProperty(ERROR_MESSAGE_KEY).toString();
     }
     return "";
   }
 
   private static String extractMessageError(ClientRequestContext request,
       ClientResponseContext response) {
-    if (response.getHeaderString(errorMessageKey) != null) {
-      return response.getHeaderString(errorMessageKey);
+    if (response.getHeaderString(ERROR_MESSAGE_KEY) != null) {
+      return response.getHeaderString(ERROR_MESSAGE_KEY);
     }
-    if (request.getProperty(errorMessageKey) != null) {
-      return request.getProperty(errorMessageKey).toString();
+    if (request.getProperty(ERROR_MESSAGE_KEY) != null) {
+      return request.getProperty(ERROR_MESSAGE_KEY).toString();
     }
     return "";
   }

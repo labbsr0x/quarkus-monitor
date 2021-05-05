@@ -42,7 +42,7 @@ class EndpointMetricsTest {
       );
 
   @Test
-  void testCreatingApplicationInfoMetrics2() {
+  void testCreatingApplicationInfoMetrics() {
     var tagValues = new String[]{SIMPLE_PATH, "", "false", "GET", "200", "http"};
     var tagKeys = new String[]{"addr", "errorMessage", "isError", "method", "status", "type"};
 
@@ -62,7 +62,6 @@ class EndpointMetricsTest {
 
         .body(containsString("dependency_up{name="))
 
-        .body(containsString("dependency_request_seconds_bucket{addr="))
         .body(containsString("dependency_request_seconds_bucket{addr="))
         .body(containsString("dependency_request_seconds_count{addr="))
         .body(containsString("dependency_request_seconds_sum{addr="));

@@ -1,3 +1,4 @@
+[![Maven Central](https://img.shields.io/maven-central/v/br.com.labbs/quarkus-monitor.svg?label=Maven%20Central)](https://search.maven.org/artifact/br.com.labbs/quarkus-monitor)
 # Extension to add BB Metrics to Quarkus Projects
 
 This projects implements the [Big Brother](https://github.com/labbsr0x/big-brother) Metrics specfication through a [Quarkus](https://quarkus.io) extension.
@@ -87,7 +88,7 @@ You can create your own dependency_request metric using addDependencyEvent metho
 
 ### How to Use
 
-Import the following dependency to your project:
+Import the following dependency to your project(check the latest version in the Maven badge at the beginning of this README):
 
 #### Maven
 
@@ -95,7 +96,7 @@ Import the following dependency to your project:
 <dependency>
   <groupId>br.com.labbs</groupId>
   <artifactId>quarkus-monitor</artifactId>
-  <version>0.1.5</version>
+  <version>x.x.X</version>
 </dependency>
 ```
 

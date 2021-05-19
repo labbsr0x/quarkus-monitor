@@ -88,7 +88,7 @@ You can create your own dependency_request metric using addDependencyEvent metho
 
 ### How to Use
 
-Import the following dependency to your project(check the latest version in the Maven badge at the beginning of this README):
+Import the following dependency to your project(**check the latest version in the Maven badge at the beginning of this README**):
 
 #### Maven
 
@@ -96,7 +96,7 @@ Import the following dependency to your project(check the latest version in the 
 <dependency>
   <groupId>br.com.labbs</groupId>
   <artifactId>quarkus-monitor</artifactId>
-  <version>x.x.X</version>
+  <version>${version}</version>
 </dependency>
 ```
 

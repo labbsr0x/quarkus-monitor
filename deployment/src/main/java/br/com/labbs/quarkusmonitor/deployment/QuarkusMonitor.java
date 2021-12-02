@@ -12,6 +12,13 @@ import io.quarkus.resteasy.common.spi.ResteasyJaxrsProviderBuildItem;
 
 class QuarkusMonitor {
 
+  private static final String FEATURE = "quarkus-monitor";
+
+  @BuildStep
+  FeatureBuildItem feature() {
+    return new FeatureBuildItem(FEATURE);
+  }
+  
   @BuildStep
   AdditionalBeanBuildItem registerAdditionalBeans() {
     return new AdditionalBeanBuildItem.Builder()

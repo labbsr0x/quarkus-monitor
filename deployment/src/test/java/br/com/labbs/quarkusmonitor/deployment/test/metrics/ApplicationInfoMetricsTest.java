@@ -1,5 +1,6 @@
 package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
+import static br.com.labbs.quarkusmonitor.runtime.core.Metrics.APP_INFO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -29,12 +30,12 @@ class ApplicationInfoMetricsTest {
 
   @Test
   void testCreatingApplicationInfoMetrics() {
-    assertNotNull(Metrics.globalRegistry.find("application_info").counter(),
+    assertNotNull(Metrics.globalRegistry.find(APP_INFO).gauge(),
         "Metric application info not found");
-    assertEquals(1d, Metrics.globalRegistry.get("application_info").counter().count(),
+    assertEquals(1d, Metrics.globalRegistry.get(APP_INFO).gauge().value(),
         "Metric with wrong value");
     assertEquals(version,
-        Metrics.globalRegistry.get("application_info").counter().getId().getTag("version"),
+        Metrics.globalRegistry.get(APP_INFO).gauge().getId().getTag("version"),
         "Metric with wrong label value");
   }
 

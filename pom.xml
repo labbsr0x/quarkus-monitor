@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.com.labbs</groupId>
   <artifactId>quarkus-monitor-parent</artifactId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
 
   <description>Extension to add Big Brother Metrics</description>
   <url>https://github.com/labbsr0x/quarkus-monitor/</url>
@@ -31,7 +32,7 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <micrometer-registry-prometheus.version>1.6.0</micrometer-registry-prometheus.version>
+    <micrometer-registry-prometheus.version>1.6.5</micrometer-registry-prometheus.version>
 
     <quarkus.version>1.9.2.Final</quarkus.version>
     <supported-maven-versions>[3.5.3,)</supported-maven-versions>

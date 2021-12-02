@@ -1,5 +1,6 @@
 package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
+import static br.com.labbs.quarkusmonitor.runtime.core.Metrics.RESPONSE_SIZE;
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import br.com.labbs.quarkusmonitor.deployment.test.filters.MetricsFilterForError;
 import br.com.labbs.quarkusmonitor.deployment.test.resources.RequestResource;
-import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import io.quarkus.test.QuarkusUnitTest;
@@ -24,7 +25,7 @@ public class ResponseSizeMetricsTest {
   private static final String SIMPLE_PATH = "/request/simple";
   private static final String ERROR_PATH = "/request/with-error/";
   private static final String EXCLUSION_BASE_PATH = "/request/metric-exclusion-";
-  private static final String NAME = "response_size_bytes";
+
 
   @RegisterExtension
   static QuarkusUnitTest test = new QuarkusUnitTest()
@@ -53,14 +54,14 @@ public class ResponseSizeMetricsTest {
 
     when().get(SIMPLE_PATH).then().statusCode(200);
 
-    assertNotNull(Metrics.globalRegistry.find(NAME).counter(), "Metric " + NAME + " not found");
+    assertNotNull(Metrics.globalRegistry.find(RESPONSE_SIZE).gauge(), "Metric " + RESPONSE_SIZE + " not found");
 
-    var samples = Metrics.globalRegistry.find(NAME).counters();
+    var samples = Metrics.globalRegistry.find(RESPONSE_SIZE).gauges();
 
     assertEquals(1, samples.size(),
         "Metric response_size_bytes with wrong number of samples");
 
-    var sample = samples.toArray(new Counter[0])[0];
+    var sample = samples.toArray(new Gauge[0])[0];
 
     var actualTagValues = sample.getId().getTags().stream().map(Tag::getValue).toArray(
         String[]::new);
@@ -69,17 +70,18 @@ public class ResponseSizeMetricsTest {
     assertArrayEquals(tagKeys, actualTagKeys, "Tags of response_size_bytes with wrong names");
     assertArrayEquals(tagValues, actualTagValues, "Tags of response_size_bytes with wrong values");
 
-    assertEquals(2d, sample.count(), "Metric response_size_bytes with wrong value");
+    assertEquals(2d, sample.measure().iterator().next().getValue(), "Metric response_size_bytes with wrong value");
 
     when().get(SIMPLE_PATH).then().statusCode(200);
-    assertEquals(4d, sample.count(), "Metric response_size_bytes with wrong value");
+
+    assertEquals(4d, sample.measure().iterator().next().getValue(), "Metric response_size_bytes with wrong value");
   }
 
   @Test
   void testCreatingResponseSizeBytesMetricsWithTagErrorInHeader() {
     when().get(ERROR_PATH + "header/400" + "/" + errorKey).then().statusCode(400);
 
-    var sample = Metrics.globalRegistry.find(NAME).counters().toArray(new Counter[0])[0];
+    var sample = Metrics.globalRegistry.find(RESPONSE_SIZE).gauges().toArray(new io.micrometer.core.instrument.Gauge[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"),
         "Wrong value for Tag isError from header in response_size_bytes metrics");
@@ -91,7 +93,7 @@ public class ResponseSizeMetricsTest {
   void testCreatingResponseSizeBytesMetricsWithTagErrorInContainer() {
     when().get(ERROR_PATH + "container/400").then().statusCode(400);
 
-    var sample = Metrics.globalRegistry.find(NAME).counters().toArray(new Counter[0])[0];
+    var sample = Metrics.globalRegistry.find(RESPONSE_SIZE).gauges().toArray(new io.micrometer.core.instrument.Gauge[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"),
         "Wrong value for Tag isError from container in response_size_bytes metrics");
@@ -103,7 +105,7 @@ public class ResponseSizeMetricsTest {
   void testCreatingResponseSizeBytesMetricsExclusions() {
     when().get(EXCLUSION_BASE_PATH + "one").then().statusCode(200);
 
-    var samples = Metrics.globalRegistry.find(NAME).counters();
+    var samples = Metrics.globalRegistry.find(RESPONSE_SIZE).counters();
 
     assertEquals(0, samples.size(),
         "Error in exclusion of path in response_size_bytes metrics with first path.");

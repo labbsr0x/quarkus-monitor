@@ -1,5 +1,6 @@
 package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
+import static br.com.labbs.quarkusmonitor.runtime.core.Metrics.REQUEST;
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +29,6 @@ class RequestMetricsTest {
   private static final String SIMPLE_PATH = "/request/simple";
   private static final String ERROR_PATH = "/request/with-error/";
   private static final String EXCLUSION_BASE_PATH = "/request/metric-exclusion-";
-  private static final String NAME = "request_seconds";
 
   @RegisterExtension
   static QuarkusUnitTest test = new QuarkusUnitTest()
@@ -59,7 +59,7 @@ class RequestMetricsTest {
 
     when().get(SIMPLE_PATH).then().statusCode(200);
 
-    var samples = Metrics.globalRegistry.find(NAME).timers();
+    var samples = Metrics.globalRegistry.find(REQUEST).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
@@ -73,21 +73,21 @@ class RequestMetricsTest {
         .toArray(String[]::new);
     var actualTagKeys = sample.getId().getTags().stream().map(Tag::getKey).toArray(String[]::new);
 
-    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
-    assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
+    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + REQUEST + " with wrong names");
+    assertArrayEquals(tagValues, actualTagValues, "Tags of " + REQUEST + " with wrong values");
 
-    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + NAME + "_sum with wrong value");
-    assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + REQUEST + "_sum with wrong value");
+    assertEquals(1, sample.count(), "Metric " + REQUEST + "_count with wrong value");
 
     when().get(SIMPLE_PATH).then().statusCode(200);
-    assertEquals(2, sample.count(), "Metric " + NAME + "_count with wrong value");
+    assertEquals(2, sample.count(), "Metric " + REQUEST + "_count with wrong value");
   }
 
   @Test
   void testCreatingRequestMetricsWithTagErrorInHeader() {
     when().get(ERROR_PATH + "header/400" + "/" + errorKey).then().statusCode(400);
 
-    var sample = Metrics.globalRegistry.find(NAME).timers()
+    var sample = Metrics.globalRegistry.find(REQUEST).timers()
         .toArray(new Timer[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"),
@@ -100,7 +100,7 @@ class RequestMetricsTest {
   void testCreatingRequestMetricsWithTagErrorInContainer() {
     when().get(ERROR_PATH + "container/400").then().statusCode(400);
 
-    var sample = Metrics.globalRegistry.find(NAME).timers()
+    var sample = Metrics.globalRegistry.find(REQUEST).timers()
         .toArray(new Timer[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"), "Receive wrong value for Tag isError");
@@ -110,7 +110,7 @@ class RequestMetricsTest {
 
   @Test
   void testCreatingRequestMetricsExclusions() {
-    var samples = Metrics.globalRegistry.find(NAME).counters();
+    var samples = Metrics.globalRegistry.find(REQUEST).counters();
 
     when().get(EXCLUSION_BASE_PATH + "one").then().statusCode(200);
     assertEquals(0, samples.size());
@@ -137,7 +137,7 @@ class RequestMetricsTest {
 
     MonitorMetrics.INSTANCE.addRequestEvent(requestEvent, 1d);
 
-    var samples = Metrics.globalRegistry.find(NAME).timers();
+    var samples = Metrics.globalRegistry.find(REQUEST).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
@@ -151,10 +151,10 @@ class RequestMetricsTest {
         .toArray(String[]::new);
     var actualTagKeys = sample.getId().getTags().stream().map(Tag::getKey).toArray(String[]::new);
 
-    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
-    assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
+    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + REQUEST + " with wrong names");
+    assertArrayEquals(tagValues, actualTagValues, "Tags of " + REQUEST + " with wrong values");
 
-    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS)  > 0, "Metric request_seconds_sum with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric request_seconds_sum with wrong value");
     assertEquals(1, sample.count(), "Metric request_seconds_count with wrong value");
   }
 }

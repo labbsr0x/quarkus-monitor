@@ -1,9 +1,10 @@
 package br.com.labbs.quarkusmonitor.runtime.util;
 
-import br.com.labbs.quarkusmonitor.runtime.config.B5NamingConvention;
+import io.micrometer.core.instrument.config.NamingConvention;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.ws.rs.Path;
@@ -14,6 +15,8 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.resteasy.core.ResourceMethodInvoker;
 
 public class FilterUtils {
+
+  private static final Pattern tagKeyChars = Pattern.compile("[^a-zA-Z0-9_]");
 
   public static final String TIMER_INIT_TIME_MILLISECONDS = "TIMER_INIT_TIME_MILLISECONDS";
   public static final String STATUS_CODE = "STATUS_CODE";
@@ -48,8 +51,8 @@ public class FilterUtils {
       var method = (Method) request.getProperty(REST_CLIENT_METHOD);
       var annotation = method.getDeclaringClass().getAnnotation(Named.class);
 
-      if(annotation != null && !annotation.value().isBlank() ){
-        return B5NamingConvention.tagConvert(annotation.value());
+      if (annotation != null && !annotation.value().isBlank()) {
+        return tagConvert(annotation.value());
       }
 
       return method.getDeclaringClass().getCanonicalName();
@@ -57,7 +60,6 @@ public class FilterUtils {
 
     return "";
   }
-
 
   public static String toPathWithParamId(ClientRequestContext request) {
     Method method = null;
@@ -97,5 +99,15 @@ public class FilterUtils {
     }
 
     return pathWithParam.isEmpty() ? defaultPath : pathWithParam;
+  }
+
+  public static String tagConvert(String key) {
+    String conventionKey = NamingConvention.snakeCase.tagKey(key);
+
+    String sanitized = tagKeyChars.matcher(conventionKey).replaceAll("_");
+    if (!Character.isLetter(sanitized.charAt(0))) {
+      sanitized = "m_" + sanitized;
+    }
+    return sanitized;
   }
 }

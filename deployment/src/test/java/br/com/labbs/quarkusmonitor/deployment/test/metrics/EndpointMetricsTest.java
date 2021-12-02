@@ -32,20 +32,17 @@ class EndpointMetricsTest {
   @RegisterExtension
   static QuarkusUnitTest test = new QuarkusUnitTest()
       .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
-          .addClasses(RequestResource.class,DependencyResource.class, MetricsFilterForError.class,
+          .addClasses(RequestResource.class, DependencyResource.class, MetricsFilterForError.class,
               DependencyRestClient.class)
           .addAsResource
               (new StringAsset("quarkus.application.version=1.0.0\n" +
-                      "dependencyRestClient/mp-rest/url=${test.url}\n"+
+                      "dependencyRestClient/mp-rest/url=${test.url}\n" +
                       "quarkus.b5.monitor.enable-http-response-size=true\n"),
-              "application.properties")
+                  "application.properties")
       );
 
   @Test
   void testCreatingApplicationInfoMetrics() {
-    var tagValues = new String[]{SIMPLE_PATH, "", "false", "GET", "200", "http"};
-    var tagKeys = new String[]{"addr", "errorMessage", "isError", "method", "status", "type"};
-
     restClient.simple();
     when().get(SIMPLE_PATH).then().statusCode(200);
 
@@ -54,7 +51,7 @@ class EndpointMetricsTest {
         .then()
         .statusCode(200)
         .body(not(containsString("<h1 class=\"container\">Internal Server Error</h1>")))
-        .body(containsString("application_info{version=\""+version+"\",} 1.0"))
+        .body(containsString("application_info{version=\"" + version + "\",} 1.0"))
 
         .body(containsString("request_seconds_bucket{addr="))
         .body(containsString("request_seconds_count{addr="))
@@ -65,6 +62,5 @@ class EndpointMetricsTest {
         .body(containsString("dependency_request_seconds_bucket{addr="))
         .body(containsString("dependency_request_seconds_count{addr="))
         .body(containsString("dependency_request_seconds_sum{addr="));
-
   }
 }

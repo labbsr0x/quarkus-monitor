@@ -1,5 +1,6 @@
 package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
+import static br.com.labbs.quarkusmonitor.runtime.core.Metrics.DEPENDENCY_UP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class DependencyUpMetricsTest {
 
   public static final String WRONG_TAG_VALUE = "Metric dependency_up with wrong tag value";
-  private static final String NAME = "dependency_up";
 
   @RegisterExtension
   static QuarkusUnitTest config = new QuarkusUnitTest()
@@ -50,18 +50,18 @@ public class DependencyUpMetricsTest {
   void testStructOfDependencyUpMetric() {
     restClient.simple();
 
-    assertNotNull(Metrics.globalRegistry.find(NAME).meter(), "Metric dependency_up not found");
-    assertNotNull(Metrics.globalRegistry.get(NAME).meter().getId().getTag("name"),
+    assertNotNull(Metrics.globalRegistry.find(DEPENDENCY_UP).meter(), "Metric dependency_up not found");
+    assertNotNull(Metrics.globalRegistry.get(DEPENDENCY_UP).meter().getId().getTag("name"),
         "Metric dependency_up with wrong tag name");
     assertEquals(DependencyRestClient.class.getName(),
-        Metrics.globalRegistry.get(NAME).meter().getId().getTag("name"), WRONG_TAG_VALUE);
+        Metrics.globalRegistry.get(DEPENDENCY_UP).meter().getId().getTag("name"), WRONG_TAG_VALUE);
   }
 
   @Test
   void testDependencyUpMetric() {
     restClient.simple();
 
-    var samples = Metrics.globalRegistry.find(NAME).gauges();
+    var samples = Metrics.globalRegistry.find(DEPENDENCY_UP).gauges();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
@@ -84,7 +84,7 @@ public class DependencyUpMetricsTest {
       restClient.simple(500);
       fail("Exception not thrown for dependency");
     } catch (Exception e) {
-      var samples = Metrics.globalRegistry.find(NAME).gauges();
+      var samples = Metrics.globalRegistry.find(DEPENDENCY_UP).gauges();
 
       assertEquals(1, samples.size(),
           "Metric with wrong number of samples");
@@ -119,7 +119,7 @@ public class DependencyUpMetricsTest {
         100, TimeUnit.MILLISECONDS);
 
     assertTimeout(Duration.ofMillis(200), () -> {
-      while (Metrics.globalRegistry.find(NAME).gauges().size() <= 0) {
+      while (Metrics.globalRegistry.find(DEPENDENCY_UP).gauges().size() <= 0) {
         try {
           TimeUnit.MILLISECONDS.sleep(1);
         } catch (InterruptedException e) {
@@ -128,9 +128,9 @@ public class DependencyUpMetricsTest {
       }
     }, "Timeout to execute a dependency checker");
 
-    var sample = Metrics.globalRegistry.find(NAME).gauges().toArray(new Gauge[0])[0];
+    var sample = Metrics.globalRegistry.find(DEPENDENCY_UP).gauges().toArray(new Gauge[0])[0];
 
-    assertEquals("myChecker", Metrics.globalRegistry.get(NAME).meter().getId().getTag("name"),
+    assertEquals("myChecker", Metrics.globalRegistry.get(DEPENDENCY_UP).meter().getId().getTag("name"),
         WRONG_TAG_VALUE);
 
     assertEquals(state.getValue(), sample.value(), "Metric dependency_up is "

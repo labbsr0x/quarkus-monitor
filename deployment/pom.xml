@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>quarkus-monitor-deployment</artifactId>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <annotationProcessorPaths>
-            <path>
-              <artifactId>quarkus-extension-processor</artifactId>
-              <groupId>io.quarkus</groupId>
-              <version>${quarkus.version}</version>
-            </path>
-          </annotationProcessorPaths>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemPropertyVariables>
-            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-          </systemPropertyVariables>
-        </configuration>
-        <version>${maven.surefire.version}</version>
-      </plugin>
-    </plugins>
-  </build>
+  <modelVersion>4.0.0</modelVersion>
+  <name>Extension to add Big Brother Metrics - Deployment</name>
+
+  <parent>
+    <artifactId>quarkus-monitor-parent</artifactId>
+    <groupId>br.com.labbs</groupId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.3.0-SNAPSHOT</version>
+  </parent>
+
+  <properties>
+    <junit.jupiter.version>5.6.2</junit.jupiter.version>
+    <maven.surefire.version>3.0.0-M4</maven.surefire.version>
+    <rest-assured.version>4.3.0</rest-assured.version>
+    <resteasy.version>4.5.6.Final</resteasy.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -82,22 +75,29 @@
     </dependency>
   </dependencies>
 
-  <modelVersion>4.0.0</modelVersion>
-
-  <name>Extension to add Big Brother Metrics - Deployment</name>
-
-  <parent>
-    <artifactId>quarkus-monitor-parent</artifactId>
-    <groupId>br.com.labbs</groupId>
-    <relativePath>../pom.xml</relativePath>
-    <version>0.2.1-SNAPSHOT</version>
-  </parent>
-
-  <properties>
-    <junit.jupiter.version>5.6.2</junit.jupiter.version>
-    <maven.surefire.version>3.0.0-M4</maven.surefire.version>
-    <rest-assured.version>4.3.0</rest-assured.version>
-    <resteasy.version>4.5.6.Final</resteasy.version>
-  </properties>
-
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>quarkus-extension-processor</artifactId>
+              <groupId>io.quarkus</groupId>
+              <version>${quarkus.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
+        </configuration>
+        <version>${maven.surefire.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

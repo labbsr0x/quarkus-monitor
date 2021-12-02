@@ -1,5 +1,6 @@
 package br.com.labbs.quarkusmonitor.deployment.test.metrics;
 
+import static br.com.labbs.quarkusmonitor.runtime.core.Metrics.DEPENDENCY_REQUEST;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 class DependencyRequestSecondsMetricsTest {
 
   private static final String SIMPLE_PATH = "/dep/simple";
-  private static final String NAME = "dependency_request_seconds";
 
   @RegisterExtension
   static QuarkusUnitTest config = new QuarkusUnitTest()
@@ -47,7 +47,7 @@ class DependencyRequestSecondsMetricsTest {
   @ConfigProperty(name = "quarkus.b5.monitor.error-message", defaultValue = "error-info")
   String errorKey;
 
-  @ConfigProperty(name = "quarkus.b5.monitor.buckets", defaultValue = "0.1, 0.3, 1.5, 10.5" )
+  @ConfigProperty(name = "quarkus.b5.monitor.buckets", defaultValue = "0.1, 0.3, 1.5, 10.5")
   List<String> buckets;
 
   @BeforeEach
@@ -64,7 +64,7 @@ class DependencyRequestSecondsMetricsTest {
 
     restClient.simple(200);
 
-    var samples = Metrics.globalRegistry.find(NAME).timers();
+    var samples = Metrics.globalRegistry.find(DEPENDENCY_REQUEST).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
@@ -77,14 +77,14 @@ class DependencyRequestSecondsMetricsTest {
         .toArray(String[]::new);
     var actualTagKeys = sample.getId().getTags().stream().map(Tag::getKey).toArray(String[]::new);
 
-    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
-    assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
+    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + DEPENDENCY_REQUEST + " with wrong names");
+    assertArrayEquals(tagValues, actualTagValues, "Tags of " + DEPENDENCY_REQUEST + " with wrong values");
 
-    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + NAME + "_sum with wrong value");
-    assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + DEPENDENCY_REQUEST + "_sum with wrong value");
+    assertEquals(1, sample.count(), "Metric " + DEPENDENCY_REQUEST + "_count with wrong value");
 
     restClient.simple(200);
-    assertEquals(2, sample.count(), "Metric " + NAME + "_count with wrong value");
+    assertEquals(2, sample.count(), "Metric " + DEPENDENCY_REQUEST + "_count with wrong value");
   }
 
   @Test
@@ -112,7 +112,7 @@ class DependencyRequestSecondsMetricsTest {
   }
 
   private void createRequestMetricsWithError(String msgError) {
-    var sample = Metrics.globalRegistry.find(NAME).meters().toArray(new Meter[0])[0];
+    var sample = Metrics.globalRegistry.find(DEPENDENCY_REQUEST).meters().toArray(new Meter[0])[0];
 
     assertEquals("true", sample.getId().getTag("isError"),
         "Receive wrong value for Tag isError");
@@ -137,7 +137,7 @@ class DependencyRequestSecondsMetricsTest {
 
     MonitorMetrics.INSTANCE.addDependencyEvent(dependencyEvent, 1d);
 
-    var samples = Metrics.globalRegistry.find(NAME).timers();
+    var samples = Metrics.globalRegistry.find(DEPENDENCY_REQUEST).timers();
 
     assertEquals(1, samples.size(),
         "Metric with wrong number of samples");
@@ -150,10 +150,10 @@ class DependencyRequestSecondsMetricsTest {
         .toArray(String[]::new);
     var actualTagKeys = sample.getId().getTags().stream().map(Tag::getKey).toArray(String[]::new);
 
-    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + NAME + " with wrong names");
-    assertArrayEquals(tagValues, actualTagValues, "Tags of " + NAME + " with wrong values");
+    assertArrayEquals(tagKeys, actualTagKeys, "Tags of " + DEPENDENCY_REQUEST + " with wrong names");
+    assertArrayEquals(tagValues, actualTagValues, "Tags of " + DEPENDENCY_REQUEST + " with wrong values");
 
-    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + NAME + "_sum with wrong value");
-    assertEquals(1, sample.count(), "Metric " + NAME + "_count with wrong value");
+    assertTrue(sample.totalTime(TimeUnit.MILLISECONDS) > 0, "Metric " + DEPENDENCY_REQUEST + "_sum with wrong value");
+    assertEquals(1, sample.count(), "Metric " + DEPENDENCY_REQUEST + "_count with wrong value");
   }
 }
